@@ -395,17 +395,18 @@ export default {
     handleAdd() {
       this.reset()
       getUser().then(response => {
-        console.log(response)
+        // console.log(response)
         this.postOptions = response.posts
         this.roleOptions = response.roles
 
         this.open = true
         this.title = '添加值班记录'
+        console.log(this.postOptions)
       })
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.userList = response.rows
-          console.log("userList")
-          console.log(this.userList)
+          // console.log("userList")
+          // console.log(this.userList)
           this.total = response.total
           this.loading = false
         }

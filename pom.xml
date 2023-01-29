@@ -176,15 +176,14 @@
 				<groupId>com.ruoyi</groupId>
 				<artifactId>ruoyi-common</artifactId>
 				<version>${ruoyi.version}</version>
+				<scope>compile</scope>
 			</dependency>
 			
-			<!-- dupy-->
 			<dependency>
-				<groupId>com.ruoyi</groupId>
-				<artifactId>ruoyi-duty</artifactId>
-				<version>${ruoyi.version}</version>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.12.0</version>
 			</dependency>
-
 		
 		
 		</dependencies>
@@ -198,6 +197,7 @@
 		<module>ruoyi-generator</module>
 		<module>ruoyi-common</module>
 		<module>ruoyi-duty</module>
+		<module>ruoyi-address</module>
 	</modules>
 	<packaging>pom</packaging>
 	

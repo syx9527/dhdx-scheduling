@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.address.mapper.SysAddressTypeMapper">
+    
+    <resultMap type="SysAddressType" id="SysAddressTypeResult">
+        <result property="addressTypeId"    column="address_type_id"    />
+        <result property="addressTypeName"    column="address_type_name"    />
+    </resultMap>
+
+    <sql id="selectSysAddressTypeVo">
+        select address_type_id, address_type_name from sys_address_type
+    </sql>
+
+    <select id="selectSysAddressTypeList" parameterType="SysAddressType" resultMap="SysAddressTypeResult">
+        <include refid="selectSysAddressTypeVo"/>
+        <where>  
+            <if test="addressTypeName != null  and addressTypeName != ''"> and address_type_name like concat('%', #{addressTypeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSysAddressTypeByAddressTypeId" parameterType="Long" resultMap="SysAddressTypeResult">
+        <include refid="selectSysAddressTypeVo"/>
+        where address_type_id = #{addressTypeId}
+    </select>
+        
+    <insert id="insertSysAddressType" parameterType="SysAddressType">
+        insert into sys_address_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addressTypeId != null">address_type_id,</if>
+            <if test="addressTypeName != null and addressTypeName != ''">address_type_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="addressTypeId != null">#{addressTypeId},</if>
+            <if test="addressTypeName != null and addressTypeName != ''">#{addressTypeName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysAddressType" parameterType="SysAddressType">
+        update sys_address_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="addressTypeName != null and addressTypeName != ''">address_type_name = #{addressTypeName},</if>
+        </trim>
+        where address_type_id = #{addressTypeId}
+    </update>
+
+    <delete id="deleteSysAddressTypeByAddressTypeId" parameterType="Long">
+        delete from sys_address_type where address_type_id = #{addressTypeId}
+    </delete>
+
+    <delete id="deleteSysAddressTypeByAddressTypeIds" parameterType="String">
+        delete from sys_address_type where address_type_id in 
+        <foreach item="addressTypeId" collection="array" open="(" separator="," close=")">
+            #{addressTypeId}
+        </foreach>
+    </delete>
+</mapper>

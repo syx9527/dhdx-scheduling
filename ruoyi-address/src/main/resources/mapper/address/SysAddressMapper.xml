@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.address.mapper.SysAddressMapper">
+	
+	<resultMap type="SysAddress" id="SysAddressResult">
+		<result property="addressId" column="address_id"/>
+		<result property="addressName" column="address_name"/>
+		<result property="adrressLocal" column="adrress_local"/>
+	</resultMap>
+	
+	<resultMap type="SysAddress" id="SysAddressResultTest">
+		<result property="addressId" column="address_id"/>
+		<result property="addressName" column="address_name"/>
+		<result property="adrressLocal" column="adrress_local"/>
+		
+		<collection property="typeList" ofType="SysAddressType">
+			<!--<result column="addressTypeId" property="address_type_id"/>-->
+			<!--<result column="addressTypeName" property="address_type_name"/>-->
+			<result column="address_type_id" property="addressTypeId"/>
+			<result column="address_type_name" property="addressTypeName"/>
+		</collection>
+	</resultMap>
+	
+	
+	<sql id="selectSysAddressVo">
+		select address_id, address_name, adrress_local
+		from sys_address
+	</sql>
+	
+	<select id="selectSysAddressList" parameterType="SysAddress" resultMap="SysAddressResultTest">
+		
+		
+		select a.address_id, a.address_name, a.adrress_local,t.address_type_id,t.address_type_name
+		from sys_address a
+		left join sys_address_type_list at on at.address_id=a.address_id inner join sys_address_type t on
+		t.address_type_id=at.address_type_id
+		<where>
+			<if test="addressName != null  and addressName != ''">and a.address_name like concat('%', #{addressName},
+				'%')
+			</if>
+			<if test="adrressLocal != null  and adrressLocal != ''">and a.adrress_local = #{adrressLocal}</if>
+		</where>
+	
+	</select>
+	
+	<!--<select id="selectSysAddressList" parameterType="SysAddress" resultMap="SysAddressResultTest">-->
+	<!--	<include refid="selectSysAddressVo"/>-->
+	<!--	<where>-->
+	<!--		<if test="addressName != null  and addressName != ''">and address_name like concat('%', #{addressName},-->
+	<!--			'%')-->
+	<!--		</if>-->
+	<!--		<if test="adrressLocal != null  and adrressLocal != ''">and adrress_local = #{adrressLocal}</if>-->
+	<!--	</where>-->
+	<!--</select>-->
+	
+	
+	<select id="selectSysAddressByAddressId" parameterType="Long" resultMap="SysAddressResult">
+		<include refid="selectSysAddressVo"/>
+		where address_id = #{addressId}
+	</select>
+	
+	<insert id="insertSysAddress" parameterType="SysAddress">
+		insert into sys_address
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="addressId != null">address_id,</if>
+			<if test="addressName != null and addressName != ''">address_name,</if>
+			<if test="adrressLocal != null and adrressLocal != ''">adrress_local,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="addressId != null">#{addressId},</if>
+			<if test="addressName != null and addressName != ''">#{addressName},</if>
+			<if test="adrressLocal != null and adrressLocal != ''">#{adrressLocal},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateSysAddress" parameterType="SysAddress">
+		update sys_address
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="addressName != null and addressName != ''">address_name = #{addressName},</if>
+			<if test="adrressLocal != null and adrressLocal != ''">adrress_local = #{adrressLocal},</if>
+		</trim>
+		where address_id = #{addressId}
+	</update>
+	
+	<delete id="deleteSysAddressByAddressId" parameterType="Long">
+		delete
+		from sys_address
+		where address_id = #{addressId}
+	</delete>
+	
+	<delete id="deleteSysAddressByAddressIds" parameterType="String">
+		delete from sys_address where address_id in
+		<foreach item="addressId" collection="array" open="(" separator="," close=")">
+			#{addressId}
+		</foreach>
+	</delete>
+</mapper>
