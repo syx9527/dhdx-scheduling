@@ -7,7 +7,7 @@ import com.ruoyi.duty.domain.SysDuty;
  * 值班类型Mapper接口
  * 
  * @author ruoyi
- * @date 2023-01-28
+ * @date 2023-01-30
  */
 public interface SysDutyMapper 
 {

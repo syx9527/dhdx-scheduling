@@ -1,46 +1,22 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <!--      <el-form-item label="值班类型id" prop="dutyId">-->
-      <!--        <el-input-->
-      <!--          v-model="queryParams.dutyId"-->
-      <!--          placeholder="请输入值班类型id"-->
-      <!--          clearable-->
-      <!--          @keyup.enter.native="handleQuery"-->
-      <!--        />-->
-      <!--      </el-form-item>-->
-      <el-form-item label="值班类型名称" prop="dutyName">
+      <el-form-item label="值班日志主键" prop="logId">
         <el-input
-          v-model="queryParams.dutyName"
-          placeholder="请输入值班类型名称"
+          v-model="queryParams.logId"
+          placeholder="请输入值班日志主键"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!--      <el-form-item label="值班人员ID" prop="userId">-->
-      <!--        <el-input-->
-      <!--          v-model="queryParams.userId"-->
-      <!--          placeholder="请输入值班人员ID"-->
-      <!--          clearable-->
-      <!--          @keyup.enter.native="handleQuery"-->
-      <!--        />-->
-      <!--      </el-form-item>-->
-      <el-form-item label="值班人员姓名" prop="userName">
+      <el-form-item label="部门id" prop="deptId">
         <el-input
-          v-model="queryParams.userName"
-          placeholder="请输入值班人员姓名"
+          v-model="queryParams.deptId"
+          placeholder="请输入部门id"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!--      <el-form-item label="部门id" prop="deptId">-->
-      <!--        <el-input-->
-      <!--          v-model="queryParams.deptId"-->
-      <!--          placeholder="请输入部门id"-->
-      <!--          clearable-->
-      <!--          @keyup.enter.native="handleQuery"-->
-      <!--        />-->
-      <!--      </el-form-item>-->
       <el-form-item label="部门名称" prop="deptName">
         <el-input
           v-model="queryParams.deptName"
@@ -49,24 +25,27 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <br/>
-      <el-form-item label="值班开始时间" prop="startTime">
-        <el-date-picker clearable
-                        v-model="queryParams.startTime"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择值班开始时间"
-        >
-        </el-date-picker>
+      <el-form-item label="值班开始时间">
+        <el-date-picker
+          v-model="daterangeStartTime"
+          style="width: 240px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
-      <el-form-item label="值班结束时间" prop="endTime">
-        <el-date-picker clearable
-                        v-model="queryParams.endTime"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择值班结束时间"
-        >
-        </el-date-picker>
+      <el-form-item label="值班结束时间">
+        <el-date-picker
+          v-model="daterangeEndTime"
+          style="width: 240px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -83,8 +62,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['duty:duty_log:add']"
-        >新增
-        </el-button>
+        >新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -95,8 +73,7 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['duty:duty_log:edit']"
-        >修改
-        </el-button>
+        >修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -107,8 +84,7 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['duty:duty_log:remove']"
-        >删除
-        </el-button>
+        >删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -118,21 +94,20 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['duty:duty_log:export']"
-        >导出
-        </el-button>
+        >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="duty_logList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="id" align="center" prop="logId"/>
-      <!--      <el-table-column label="值班类型id" align="center" prop="dutyId"/>-->
-      <el-table-column label="值班类型名称" align="center" prop="dutyName"/>
-      <!--      <el-table-column label="值班人员ID" align="center" prop="userId"/>-->
-      <el-table-column label="值班人员姓名" align="center" prop="userName"/>
-      <!--      <el-table-column label="部门id" align="center" prop="deptId"/>-->
-      <el-table-column label="部门名称" align="center" prop="deptName"/>
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="值班日志主键" align="center" prop="logId" />
+      <el-table-column label="值班类型id" align="center" prop="dutyId" />
+      <el-table-column label="值班类型名称" align="center" prop="dutyName" />
+      <el-table-column label="值班人员ID" align="center" prop="userId" />
+      <el-table-column label="值班人员姓名" align="center" prop="userName" />
+      <el-table-column label="部门id" align="center" prop="deptId" />
+      <el-table-column label="部门名称" align="center" prop="deptName" />
       <el-table-column label="值班开始时间" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
@@ -151,20 +126,18 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['duty:duty_log:edit']"
-          >修改
-          </el-button>
+          >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['duty:duty_log:remove']"
-          >删除
-          </el-button>
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-
+    
     <pagination
       v-show="total>0"
       :total="total"
@@ -174,61 +147,28 @@
     />
 
     <!-- 添加或修改值班记录对话框 -->
-
-
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-
-        <el-form-item label="值班类型名称" prop="dutyId">
-          <el-input v-model="form.dutyId" placeholder="请输入值班类型名称"/>
+        <el-form-item label="部门id" prop="deptId">
+          <el-input v-model="form.deptId" placeholder="请输入部门id" />
         </el-form-item>
-        <el-form-item label="值班人员姓名" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入值班人员姓名"/>
+        <el-form-item label="部门名称" prop="deptName">
+          <el-input v-model="form.deptName" placeholder="请输入部门名称" />
         </el-form-item>
-        <el-form-item label="归属部门" prop="deptId">
-          <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门"/>
-        </el-form-item>
-
-        <el-form-item label="岗位">
-          <el-select v-model="form.postIds" multiple placeholder="请选择岗位">
-            <el-option
-              v-for="item in postOptions"
-              :key="item.postId"
-              :label="item.postName"
-              :value="item.postId"
-              :disabled="item.status == 1"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="用户">
-          <el-select v-model="form.userId"  placeholder="请选择用户">
-            <el-option
-              v-for="item in userList"
-              :key="item.userId"
-              :label="item.nickName"
-              :value="item.userId"
-              :disabled="item.admin === true "
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
         <el-form-item label="值班开始时间" prop="startTime">
           <el-date-picker clearable
-                          v-model="form.startTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择值班开始时间"
-          >
+            v-model="form.startTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择值班开始时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="值班结束时间" prop="endTime">
           <el-date-picker clearable
-                          v-model="form.endTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择值班结束时间"
-          >
+            v-model="form.endTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择值班结束时间">
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -241,22 +181,10 @@
 </template>
 
 <script>
-import { listDuty_log, getDuty_log, delDuty_log, addDuty_log, updateDuty_log } from '@/api/duty/duty_log'
-import { listPost, getPost, delPost, addPost, updatePost } from '@/api/system/post'
-
-import {
-  listUser,
-  getUser,
-  delUser,
-  addUser,
-  updateUser,
-  resetUserPwd,
-  changeUserStatus,
-  deptTreeSelect
-} from '@/api/system/user'
+import { listDuty_log, getDuty_log, delDuty_log, addDuty_log, updateDuty_log } from "@/api/duty/duty_log";
 
 export default {
-  name: 'Duty_log',
+  name: "Duty_log",
   data() {
     return {
       // 遮罩层
@@ -271,27 +199,21 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 部门树选项
-      deptOptions: undefined,
-      // 是否显示弹出层
-      open: false,
-      // 部门名称
-      deptName: undefined,
-      // 岗位选项
-      postOptions: [],
       // 值班记录表格数据
       duty_logList: [],
       // 弹出层标题
-      title: '',
-      // 用户表格数据
-      userList: null,
-      // 日期范围
-      dateRange: [],
-
+      title: "",
+      // 是否显示弹出层
+      open: false,
+      // 值班结束时间时间范围
+      daterangeStartTime: [],
+      // 值班结束时间时间范围
+      daterangeEndTime: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        logId: null,
         dutyId: null,
         dutyName: null,
         userId: null,
@@ -305,59 +227,47 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        dutyName: [
-          { required: true, message: '值班类型id不能为空', trigger: 'blur' }
+        dutyId: [
+          { required: true, message: "值班类型id不能为空", trigger: "change" }
         ],
-        userName: [
-          { required: true, message: '值班人员ID不能为空', trigger: 'blur' }
+        userId: [
+          { required: true, message: "值班人员ID不能为空", trigger: "change" }
         ],
-        deptName: [
-          { required: true, message: '部门id不能为空', trigger: 'blur' }
+        startTime: [
+          { required: true, message: "值班开始时间不能为空", trigger: "blur" }
+        ],
+        endTime: [
+          { required: true, message: "值班结束时间不能为空", trigger: "blur" }
         ]
       }
-    }
+    };
   },
-  // watch: {
-  //   // 根据名称筛选部门树
-  //   deptName(val) {
-  //     this.$refs.tree.filter(val)
-  //   }
-  // },
   created() {
-    this.getList()
-    // this.getDeptTree()
+    this.getList();
   },
   methods: {
     /** 查询值班记录列表 */
     getList() {
-      this.loading = true
+      this.loading = true;
+      this.queryParams.params = {};
+      if (null != this.daterangeStartTime && '' != this.daterangeStartTime) {
+        this.queryParams.params["beginStartTime"] = this.daterangeStartTime[0];
+        this.queryParams.params["endStartTime"] = this.daterangeStartTime[1];
+      }
+      if (null != this.daterangeEndTime && '' != this.daterangeEndTime) {
+        this.queryParams.params["beginEndTime"] = this.daterangeEndTime[0];
+        this.queryParams.params["endEndTime"] = this.daterangeEndTime[1];
+      }
       listDuty_log(this.queryParams).then(response => {
-        this.duty_logList = response.rows
-        this.total = response.total
-        this.loading = false
-      })
-    },
-    /** 查询部门下拉树结构 */
-    getDeptTree() {
-      deptTreeSelect().then(response => {
-
-        this.deptOptions = response.data
-      })
-    },
-    // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
-    },
-    // 节点单击事件
-    handleNodeClick(data) {
-      this.queryParams.deptId = data.id
-      this.handleQuery()
+        this.duty_logList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
     },
     // 取消按钮
     cancel() {
-      this.open = false
-      this.reset()
+      this.open = false;
+      this.reset();
     },
     // 表单重置
     reset() {
@@ -369,89 +279,74 @@ export default {
         userName: null,
         deptId: null,
         deptName: null,
-        delFlag: null,
         startTime: null,
         endTime: null
-      }
-      this.resetForm('form')
+      };
+      this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1
-      this.getList()
+      this.queryParams.pageNum = 1;
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm('queryForm')
-      this.handleQuery()
+      this.daterangeStartTime = [];
+      this.daterangeEndTime = [];
+      this.resetForm("queryForm");
+      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.logId)
-      this.single = selection.length !== 1
+      this.single = selection.length!==1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset()
-      getUser().then(response => {
-        // console.log(response)
-        this.postOptions = response.posts
-        this.roleOptions = response.roles
-
-        this.open = true
-        this.title = '添加值班记录'
-        console.log(this.postOptions)
-      })
-      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.userList = response.rows
-          // console.log("userList")
-          // console.log(this.userList)
-          this.total = response.total
-          this.loading = false
-        }
-      )
+      this.reset();
+      this.open = true;
+      this.title = "添加值班记录";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
+      this.reset();
       const logId = row.logId || this.ids
       getDuty_log(logId).then(response => {
-        this.form = response.data
-        this.open = true
-        this.title = '修改值班记录'
-      })
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改值班记录";
+      });
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs['form'].validate(valid => {
+      this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.logId != null) {
             updateDuty_log(this.form).then(response => {
-              this.$modal.msgSuccess('修改成功')
-              this.open = false
-              this.getList()
-            })
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
           } else {
             addDuty_log(this.form).then(response => {
-              this.$modal.msgSuccess('新增成功')
-              this.open = false
-              this.getList()
-            })
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
           }
         }
-      })
+      });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const logIds = row.logId || this.ids
+      const logIds = row.logId || this.ids;
       this.$modal.confirm('是否确认删除值班记录编号为"' + logIds + '"的数据项？').then(function() {
-        return delDuty_log(logIds)
+        return delDuty_log(logIds);
       }).then(() => {
-        this.getList()
-        this.$modal.msgSuccess('删除成功')
-      }).catch(() => {
-      })
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -460,5 +355,5 @@ export default {
       }, `duty_log_${new Date().getTime()}.xlsx`)
     }
   }
-}
+};
 </script>

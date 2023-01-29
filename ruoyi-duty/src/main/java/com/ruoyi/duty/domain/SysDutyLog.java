@@ -11,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 值班记录对象 sys_duty_log
  * 
  * @author ruoyi
- * @date 2023-01-28
+ * @date 2023-01-30
  */
 public class SysDutyLog extends BaseEntity
 {
@@ -26,11 +26,11 @@ public class SysDutyLog extends BaseEntity
 
     /** 值班类型名称 */
     @Excel(name = "值班类型名称")
-    private Long dutyName;
+    private String dutyName;
 
     /** 值班人员ID */
     @Excel(name = "值班人员ID")
-    private String userId;
+    private Long userId;
 
     /** 值班人员姓名 */
     @Excel(name = "值班人员姓名")
@@ -38,14 +38,11 @@ public class SysDutyLog extends BaseEntity
 
     /** 部门id */
     @Excel(name = "部门id")
-    private String deptId;
+    private Long deptId;
 
     /** 部门名称 */
     @Excel(name = "部门名称")
     private String deptName;
-
-    /** 删除标志（0代表存在 2代表删除） */
-    private String delFlag;
 
     /** 值班开始时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -75,21 +72,21 @@ public class SysDutyLog extends BaseEntity
     {
         return dutyId;
     }
-    public void setDutyName(Long dutyName) 
+    public void setDutyName(String dutyName) 
     {
         this.dutyName = dutyName;
     }
 
-    public Long getDutyName() 
+    public String getDutyName() 
     {
         return dutyName;
     }
-    public void setUserId(String userId) 
+    public void setUserId(Long userId) 
     {
         this.userId = userId;
     }
 
-    public String getUserId() 
+    public Long getUserId() 
     {
         return userId;
     }
@@ -102,12 +99,12 @@ public class SysDutyLog extends BaseEntity
     {
         return userName;
     }
-    public void setDeptId(String deptId) 
+    public void setDeptId(Long deptId) 
     {
         this.deptId = deptId;
     }
 
-    public String getDeptId() 
+    public Long getDeptId() 
     {
         return deptId;
     }
@@ -119,15 +116,6 @@ public class SysDutyLog extends BaseEntity
     public String getDeptName() 
     {
         return deptName;
-    }
-    public void setDelFlag(String delFlag) 
-    {
-        this.delFlag = delFlag;
-    }
-
-    public String getDelFlag() 
-    {
-        return delFlag;
     }
     public void setStartTime(Date startTime) 
     {
@@ -158,7 +146,6 @@ public class SysDutyLog extends BaseEntity
             .append("userName", getUserName())
             .append("deptId", getDeptId())
             .append("deptName", getDeptName())
-            .append("delFlag", getDelFlag())
             .append("startTime", getStartTime())
             .append("endTime", getEndTime())
             .toString();

@@ -9,13 +9,14 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 值班类型对象 sys_duty
  * 
  * @author ruoyi
- * @date 2023-01-28
+ * @date 2023-01-30
  */
 public class SysDuty extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** del_flag */
+    /** id */
+    @Excel(name = "id")
     private Long dutyId;
 
     /** 值班类型 */
