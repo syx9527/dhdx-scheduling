@@ -1,5 +1,6 @@
-package com.ruoyi;
+package com.ruoyi.test;
 
+import com.ruoyi.RuoYiApplication;
 import com.ruoyi.address.domain.SysAddress;
 import com.ruoyi.address.service.ISysAddressService;
 import org.junit.Test;

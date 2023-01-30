@@ -212,6 +212,7 @@
 		<module>ruoyi-common</module>
 		<module>ruoyi-duty</module>
 		<module>ruoyi-address</module>
+		<module>ruoyi-test</module>
 	</modules>
 	<packaging>pom</packaging>
 
