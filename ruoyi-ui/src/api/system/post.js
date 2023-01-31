@@ -35,10 +35,12 @@ export function updatePost(data) {
   })
 }
 
-// 删除岗位
+
 export function delPost(postId) {
+  console.log("delete")
   return request({
     url: '/system/post/' + postId,
     method: 'delete'
   })
+
 }
