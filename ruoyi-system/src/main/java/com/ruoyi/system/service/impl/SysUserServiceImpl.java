@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Validator;
 
+import com.ruoyi.duty.mapper.SysDutyMapper;
+import com.ruoyi.system.mapper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,8 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.domain.SysPost;
 import com.ruoyi.system.domain.SysUserPost;
 import com.ruoyi.system.domain.SysUserRole;
-import com.ruoyi.system.mapper.SysPostMapper;
-import com.ruoyi.system.mapper.SysRoleMapper;
-import com.ruoyi.system.mapper.SysUserMapper;
-import com.ruoyi.system.mapper.SysUserPostMapper;
-import com.ruoyi.system.mapper.SysUserRoleMapper;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
-
 /**
  * 用户 业务层处理
  *
@@ -55,6 +51,9 @@ public class SysUserServiceImpl implements ISysUserService {
     @Autowired
     private SysUserPostMapper userPostMapper;
 
+    // @Autowired
+    // private SysUserDutyLogMapper userDutyLogMapper;
+
     @Autowired
     private ISysConfigService configService;
 
@@ -72,6 +71,16 @@ public class SysUserServiceImpl implements ISysUserService {
     public List<SysUser> selectUserList(SysUser user) {
 
         return userMapper.selectUserList(user);
+    }
+
+    /**
+     * 查询用户名
+     *
+     * @param userId 用户id
+     */
+    @Override
+    public String selectUserNickName(Long userId) {
+        return null;
     }
 
     /**
@@ -409,6 +418,10 @@ public class SysUserServiceImpl implements ISysUserService {
         userRoleMapper.deleteUserRoleByUserId(userId);
         // 删除用户与岗位表
         userPostMapper.deleteUserPostByUserId(userId);
+
+        // 删除用户与排班记录
+        // userDutyLogMapper.deleteUserDutyLogByUserId(userId);
+
         return userMapper.deleteUserById(userId);
     }
 
@@ -429,6 +442,9 @@ public class SysUserServiceImpl implements ISysUserService {
         userRoleMapper.deleteUserRole(userIds);
         // 删除用户与岗位关联
         userPostMapper.deleteUserPost(userIds);
+        // // 删除用户与排班记录
+        // userDutyLogMapper.deleteUserDutyLog(userIds);
+
         return userMapper.deleteUserByIds(userIds);
     }
 

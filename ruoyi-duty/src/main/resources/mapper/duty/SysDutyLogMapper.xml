@@ -22,7 +22,7 @@
 		<!--<association property="duty" select="com.ruoyi.duty.mapper.SysDutyMapper.selectSysDutyByDutyId" column="duty_id"/>-->
 		<!--<association property="user" select="com.ruoyi.system.mapper.SysUserMapper.selectUserById" column="user_id"/>-->
 		
-		<association property="duty" column="duty_id" javaType="com.ruoyi.common.core.domain.entity.SysDept"
+		<association property="duty" column="duty_id" javaType="com.ruoyi.duty.domain.SysDuty"
 		             resultMap="SysDutyResult"/>
 		<association property="dept" column="dept_id" javaType="com.ruoyi.common.core.domain.entity.SysDept"
 		             resultMap="deptResult"/>
@@ -105,6 +105,7 @@
 		       du.duty_id,
 		       du.duty_type
 		
+		
 		from sys_duty_log log
 			     left join sys_user u on log.user_id = u.user_id
 			     left join sys_dept d on u.dept_id = d.dept_id
@@ -112,24 +113,22 @@
 	</sql>
 	<select id="selectSysDutyLogList" parameterType="SysDutyLog" resultMap="SysDutyLogResult">
 		<include refid="selectALL"/>
-		where 1=1
+		where   u.del_flag = '0' and u.user_id !=1 and d.del_flag = '0'  and du.del_flag = '0'
 		<if test="logId != null">
 			and log.log_id = #{logId}
 		</if>
 		<if test="dutyId != null">
 			and log.duty_id = #{dutyId}
 		</if>
-		<!--<if test="dutyName != null  and dutyName != ''">-->
-		<!--	and duty_name like concat('%', #{dutyName}, '%')-->
-		<!--</if>-->
+		
 		<if test="userId != null">
 			and log.user_id = #{userId}
 		</if>
-		<!--<if test="userName != null  and userName != ''">-->
-		<!--	and user_name like concat('%', #{userName}, '%')-->
-		<!--</if>-->
+		
 		<if test="deptId != null">
-			and log.dept_id = #{deptId}
+			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId},
+			ancestors) ))
+		
 		</if>
 		<if test="createBy != null">
 			and log.create_by = #{createBy}
@@ -149,18 +148,15 @@
 			and log.end_time between #{params.beginEndTime} and #{params.endEndTime}
 		</if>
 		
-		<!-- 数据范围过滤 -->
-		${params.dataScope}
+		<!--&lt;!&ndash; 数据范围过滤 &ndash;&gt;-->
+		<!--${params.dataScope}-->
 	
 	</select>
 	
-	<select id="selectALL" parameterType="Long" resultMap="SysDutyLogResult">
-		<include refid="selectSysDutyLogVo"/>
+	<select id="selectSysDutyLogByLogId" parameterType="Long" resultMap="SysDutyLogResult">
+		<include refid="selectALL"/>
 		where log_id = #{logId}
-		left join sys_user u on log.user_id = u.user_id
-		left join sys_dept d on u.dept_id = d.dept_id
-		left join sys_duty du on log.duty_id = du.duty_id
-		${params.dataScope}
+	
 	</select>
 	
 	<insert id="insertSysDutyLog" parameterType="SysDutyLog" useGeneratedKeys="true" keyProperty="logId">
@@ -169,21 +165,15 @@
 			<if test="dutyId != null">
 				duty_id,
 			</if>
-			<!--<if test="dutyName != null">-->
-			<!--	duty_name,-->
-			<!--</if>-->
+			
 			<if test="userId != null">
 				user_id,
 			</if>
-			<!--<if test="userName != null">-->
-			<!--	user_name,-->
-			<!--</if>-->
+			
 			<if test="deptId != null">
 				dept_id,
 			</if>
-			<!--<if test="deptName != null">-->
-			<!--	dept_name,-->
-			<!--</if>-->
+			
 			<if test="startTime != null">
 				start_time,
 			</if>
@@ -203,21 +193,15 @@
 			<if test="dutyId != null">
 				#{dutyId},
 			</if>
-			<!--<if test="dutyName != null">-->
-			<!--	#{dutyName},-->
-			<!--</if>-->
+			
 			<if test="userId != null">
 				#{userId},
 			</if>
-			<!--<if test="userName != null">-->
-			<!--	#{userName},-->
-			<!--</if>-->
+			
 			<if test="deptId != null">
 				#{deptId},
 			</if>
-			<!--<if test="deptName != null">-->
-			<!--	#{deptName},-->
-			<!--</if>-->
+			
 			<if test="startTime != null">
 				#{startTime},
 			</if>
@@ -241,21 +225,15 @@
 			<if test="dutyId != null">
 				duty_id = #{dutyId},
 			</if>
-			<if test="dutyName != null">
-				duty_name = #{dutyName},
-			</if>
+			
 			<if test="userId != null">
 				user_id = #{userId},
 			</if>
-			<if test="userName != null">
-				user_name = #{userName},
-			</if>
+			
 			<if test="deptId != null">
 				dept_id = #{deptId},
 			</if>
-			<if test="deptName != null">
-				dept_name = #{deptName},
-			</if>
+			
 			<if test="startTime != null">
 				start_time = #{startTime},
 			</if>
@@ -274,14 +252,13 @@
 	</update>
 	
 	<delete id="deleteSysDutyLogByLogId" parameterType="Long">
-		delete
-		from sys_duty_log
+		update sys_duty_log
+		set del_flag = '2'
 		where log_id = #{logId}
 	</delete>
 	
 	<delete id="deleteSysDutyLogByLogIds" parameterType="String">
-		delete
-		from sys_duty_log where log_id in
+		update sys_duty_log set del_flag = '2' where log_id in
 		<foreach item="logId" collection="array" open="(" separator="," close=")">
 			#{logId}
 		</foreach>

@@ -170,6 +170,7 @@
         />
       </el-col>
     </el-row>
+
     <!-- 添加或修改值班记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -179,6 +180,19 @@
           <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门"
                       @select="getUserList "
           />
+        </el-form-item>
+
+        <el-form-item label="类型">
+          <el-select v-model="form.dutyId" placeholder="请选择值班类型">
+            <el-option
+              v-for="item in dutyOptions"
+              :key="item.dutyId"
+              :label="item.dutyType"
+              :value="item.dutyId"
+              :disabled="item.status == 1 "
+
+            ></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="用户">
@@ -204,6 +218,7 @@
           >
           </el-date-picker>
         </el-form-item>
+
         <el-form-item label="值班结束时间" prop="endTime">
           <el-date-picker clearable
                           v-model="form.endTime"
@@ -237,6 +252,7 @@ import {
 import { getToken } from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { listDuty } from '@/api/duty/duty'
 
 export default {
   name: 'Duty_log',
@@ -269,6 +285,8 @@ export default {
       deptCheckedNode: undefined,
       // 用户选项
       userOptions: [],
+      // 值班类型选项
+      dutyOptions: [],
 
       // 是否显示弹出层
       open: false,
@@ -306,10 +324,13 @@ export default {
       // 表单校验
       rules: {
         dutyId: [
-          { required: true, message: '值班类型id不能为空', trigger: 'change' }
+          { required: true, message: '值班类型不能为空', trigger: 'change' }
+        ],
+        deptId: [
+          { required: false, message: '部门不能为空', trigger: 'blur' }
         ],
         userId: [
-          { required: true, message: '值班人员ID不能为空', trigger: 'change' }
+          { required: true, message: '用户不能为空', trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '值班开始时间不能为空', trigger: 'blur' }
@@ -330,9 +351,24 @@ export default {
   created() {
     this.getList()
     this.getDeptTree()
+    this.getListDuty()
+
   },
   methods: {
-    /** 查询用户列表 */
+    /** 查询值班类型列表 */
+    getListDuty() {
+
+      listDuty({
+
+        pageNum: 1,
+        pageSize: 1000
+
+      }).then(response => {
+        this.dutyOptions = response.rows
+      })
+    },
+
+    /** 点击部门节点后查询用户列表 */
     getUserList(data) {
       this.queryParamsTemp = {
         deptId: data.id,
@@ -340,9 +376,12 @@ export default {
         pageSize: 1000,
         isadmin: false
       }
+      if (this.form.deptId !== data.id) {
+        delete this.form.userId
+
+      }
       listUser(this.queryParamsTemp).then(response => {
           this.userOptions = response.rows
-
         }
       )
     },
@@ -414,6 +453,7 @@ export default {
       this.daterangeEndTime = []
       this.resetForm('queryForm')
       this.handleQuery()
+      this.getDeptTree()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -423,16 +463,31 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+
       this.reset()
+      this.getListDuty()
       this.open = true
       this.title = '添加值班记录'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
+      this.form = {}
       const logId = row.logId || this.ids
       getDuty_log(logId).then(response => {
-        this.form = response.data
+        let res
+        res = response.data
+
+        this.getUserList(res.deptId)
+
+        this.form.deptId = res.deptId
+        this.form.userId = res.userId
+
+        this.form.logId = res.logId
+        this.form.dutyId = res.dutyId
+        this.form.startTime = res.startTime
+        this.form.endTime = res.endTime
+
         this.open = true
         this.title = '修改值班记录'
       })

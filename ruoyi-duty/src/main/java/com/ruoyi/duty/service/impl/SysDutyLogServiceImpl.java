@@ -9,6 +9,8 @@ import com.ruoyi.duty.mapper.SysDutyLogMapper;
 import com.ruoyi.duty.domain.SysDutyLog;
 import com.ruoyi.duty.service.ISysDutyLogService;
 
+import static com.ruoyi.common.utils.PageUtils.startPage;
+
 /**
  * 值班记录Service业务层处理
  *
@@ -27,7 +29,7 @@ public class SysDutyLogServiceImpl implements ISysDutyLogService {
      * @return 值班记录
      */
     @Override
-    @DataScope(deptAlias = "d", userAlias = "u")
+    // @DataScope(deptAlias = "d", userAlias = "u")
     public SysDutyLog selectSysDutyLogByLogId(Long logId) {
         return sysDutyLogMapper.selectSysDutyLogByLogId(logId);
     }
@@ -41,6 +43,7 @@ public class SysDutyLogServiceImpl implements ISysDutyLogService {
     @Override
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysDutyLog> selectSysDutyLogList(SysDutyLog sysDutyLog) {
+        startPage();
         return sysDutyLogMapper.selectSysDutyLogList(sysDutyLog);
     }
 

@@ -33,7 +33,17 @@ public class SysDutyLog extends BaseEntity {
     /**
      * 值班类型名称
      */
-    @Excel(name = "值班类型名称")
+    private String dutyName;
+
+    public String getDutyName() {
+        return dutyName;
+    }
+
+    public void setDutyName(String dutyName) {
+        this.dutyName = dutyName;
+    }
+
+    @Excel(name = "值班类型名称", targetAttr = "dutyType")
     private SysDuty duty;
 
     /**
@@ -68,13 +78,12 @@ public class SysDutyLog extends BaseEntity {
     /**
      * 部门id
      */
-    @Excel(name = "部门id")
     private Long deptId;
 
     /**
      * 部门名称
      */
-    @Excel(name = "部门名称", targetAttr = "")
+    @Excel(name = "部门名称", targetAttr = "deptName")
     private SysDept dept;
 
     /**
@@ -154,9 +163,9 @@ public class SysDutyLog extends BaseEntity {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("logId", getLogId())
                 .append("dutyId", getDutyId())
+                .append("dutyName", getDutyName())
                 .append("dutyName", getDuty().getDutyType())
                 .append("userId", getUserId())
-                .append("userName", getUser().getNickName())
                 .append("deptId", getDeptId())
                 .append("deptName", getDept().getDeptName())
                 .append("startTime", getStartTime())
