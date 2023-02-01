@@ -52,10 +52,11 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
             ></el-date-picker>
-          </el-form-item>
 
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
 
@@ -173,7 +174,19 @@
           />
         </el-form-item>
 
-        <el-form-item label="类型">
+        <el-form-item label="用户" prop="userId">
+          <el-select v-model="form.userId" placeholder="请选择用户">
+            <el-option
+              v-for="item in userOptions"
+              :key="item.userId"
+              :label="item.nickName"
+              :value="item.userId"
+              :disabled="item.status == 1 || item.admin == true"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="值班类型" prop="dutyId">
           <el-select v-model="form.dutyId" placeholder="请选择值班类型">
             <el-option
               v-for="item in dutyOptions"
@@ -186,21 +199,10 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="用户">
-          <el-select v-model="form.userId" placeholder="请选择用户">
-            <el-option
-              v-for="item in userOptions"
-              :key="item.userId"
-              :label="item.nickName"
-              :value="item.userId"
-              :disabled="item.status == 1 || item.admin == true"
 
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="值班时间">
+        <el-form-item label="值班时间" prop="startAndEndTime">
           <el-date-picker
-            v-model="startAndEndTime"
+            v-model="form.startAndEndTime"
             style="width: 240px"
             value-format="yyyy-MM-dd"
             type="daterange"
@@ -221,7 +223,7 @@
 </template>
 
 <script>
-import { listDuty_log, getDuty_log, delDuty_log, addDuty_log, updateDuty_log } from '@/api/duty/duty_log'
+import {listDuty_log, getDuty_log, delDuty_log, addDuty_log, updateDuty_log} from '@/api/duty/duty_log'
 import {
   listUser,
   getUser,
@@ -232,14 +234,14 @@ import {
   changeUserStatus,
   deptTreeSelect
 } from '@/api/system/user'
-import { getToken } from '@/utils/auth'
+import {getToken} from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { listDuty } from '@/api/duty/duty'
+import {listDuty} from '@/api/duty/duty'
 
 export default {
   name: 'Duty_log',
-  components: { Treeselect },
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
@@ -310,20 +312,23 @@ export default {
       // 表单校验
       rules: {
         dutyId: [
-          { required: true, message: '值班类型不能为空', trigger: 'change' }
+          {required: true, message: '值班类型不能为空', trigger: 'change'}
         ],
         deptId: [
-          { required: false, message: '部门不能为空', trigger: 'blur' }
+          {required: false, message: '部门不能为空', trigger: 'change'}
         ],
         userId: [
-          { required: true, message: '用户不能为空', trigger: 'blur' }
+          {required: true, message: '用户不能为空', trigger: 'blur'}
+        ],
+        startAndEndTime: [
+          {required: true, type: 'array', message: '值班时间不能为空', trigger: 'change'}
         ],
         startTime: [
-          { required: true, message: '值班开始时间不能为空', trigger: 'blur' }
+          {required: true, type: 'array', message: '值班开始时间不能为空', trigger: 'change'}
         ],
         endTime: [
-          { required: true, message: '值班结束时间不能为空', trigger: 'blur' }
-        ]
+          {required: true, type: 'array', message: '值班结束时间不能为空', trigger: 'change'}]
+
       }
     }
   },
@@ -465,6 +470,7 @@ export default {
         let res
         res = response.data
 
+
         this.getUserList(res.deptId)
 
         this.form.deptId = res.deptId
@@ -472,7 +478,7 @@ export default {
 
         this.form.logId = res.logId
         this.form.dutyId = res.dutyId
-        this.startAndEndTime = [res.startTime, res.endTime]
+        this.form.startAndEndTime = [res.startTime, res.endTime]
         this.form.startTime = res.startTime
         this.form.endTime = res.endTime
 
@@ -482,13 +488,18 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      if (null != this.form.startAndEndTime && '' !== this.form.startAndEndTime) {
+        this.form.startTime = this.form.startAndEndTime[0]
+        this.form.endTime = this.form.startAndEndTime[1]
+      }
       this.$refs['form'].validate(valid => {
+        delete this.form.startAndEndTime
         if (valid) {
 
-          if (null != this.startAndEndTime && '' !== this.startAndEndTime) {
-            this.form.startTime = this.startAndEndTime[0]
-            this.form.endTime = this.startAndEndTime[1]
-          }
+          // if (null != this.startAndEndTime && '' !== this.startAndEndTime) {
+          //   this.form.startTime = this.startAndEndTime[0]
+          //   this.form.endTime = this.startAndEndTime[1]
+          // }
           this.form.deptId = null
           if (this.form.logId != null) {
             updateDuty_log(this.form).then(response => {
@@ -510,7 +521,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const logIds = row.logId || this.ids
-      this.$modal.confirm('是否确认删除值班记录编号为"' + logIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除值班记录编号为"' + logIds + '"的数据项？').then(function () {
         return delDuty_log(logIds)
       }).then(() => {
         this.getList()

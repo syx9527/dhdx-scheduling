@@ -173,11 +173,9 @@ public class SysDutyLog extends BaseEntity {
                 .append("logId", getLogId())
                 .append("dutyId", getDutyId())
                 .append("dutyName", getDutyName())
-                .append("dutyName", getDuty().getDutyType())
                 .append("userId", getUserId())
                 .append("nickName", getNickName())
                 .append("deptId", getDeptId())
-                .append("deptName", getDept().getDeptName())
                 .append("startTime", getStartTime())
                 .append("endTime", getEndTime())
                 .toString();

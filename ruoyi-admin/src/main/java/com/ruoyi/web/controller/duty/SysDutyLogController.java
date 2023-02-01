@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.duty.domain.SysDuty;
 import com.ruoyi.duty.service.ISysDutyService;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -82,14 +83,23 @@ public class SysDutyLogController extends BaseController {
     @Log(title = "值班记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SysDutyLog sysDutyLog) {
+        if (sysDutyLog.getUserId() == null) {
+            return error("用户不能为空");
+        } else if (sysDutyLog.getDutyId() == null) {
+            return error("值班类型不能为空");
+        } else if (sysDutyLog.getStartTime() == null) {
+            return error("开始时间不能为空");
+        } else if (sysDutyLog.getEndTime() == null) {
+            return error("结束时间不能为空");
+        }
 
-        sysDutyLog.setDeptId(sysUserService.selectUserById(sysDutyLog.getUserId()).getDeptId());
+        SysUser sysUser = sysUserService.selectUserById(sysDutyLog.getUserId());
+        SysDuty sysDuty = sysDutyService.selectSysDutyByDutyId(sysDutyLog.getDutyId());
+        sysDutyLog.setDeptId(sysUser.getDeptId());
 
-        sysDutyLog.setDutyId(sysDutyService.selectSysDutyByDutyId(sysDutyLog.getDutyId()).getDutyId());
+        sysDutyLog.setDutyId(sysDuty.getDutyId());
         sysDutyLog.setCreateBy(getUsername());
-        System.out.println("------------------");
-        System.out.println(sysDutyLog);
-        System.out.println("------------------");
+
         return toAjax(sysDutyLogService.insertSysDutyLog(sysDutyLog));
     }
 

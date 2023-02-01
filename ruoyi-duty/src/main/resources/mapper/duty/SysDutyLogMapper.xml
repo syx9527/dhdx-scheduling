@@ -1,241 +1,238 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.duty.mapper.SysDutyLogMapper">
-	
-	<resultMap type="SysDutyLog" id="SysDutyLogResult">
-		<result property="logId" column="log_id"/>
-		<result property="dutyId" column="duty_id"/>
-		<result property="deptId" column="dept_id"/>
-		<result property="userId" column="user_id"/>
-		
-		<result property="startTime" column="start_time"/>
-		<result property="endTime" column="end_time"/>
-		<result property="createBy" column="create_by"/>
-		<result property="createTime" column="create_time"/>
-		<result property="updateBy" column="update_by"/>
-		<result property="updateTime" column="update_time"/>
-		<result property="remark" column="remark"/>
-		
-		<!--<association property="dept" select="com.ruoyi.system.mapper.SysDeptMapper.selectDeptById" column="dept_id"/>-->
-		<!--<association property="duty" select="com.ruoyi.duty.mapper.SysDutyMapper.selectSysDutyByDutyId" column="duty_id"/>-->
-		<!--<association property="user" select="com.ruoyi.system.mapper.SysUserMapper.selectUserById" column="user_id"/>-->
-		
-		<association property="duty" column="duty_id" javaType="com.ruoyi.duty.domain.SysDuty"
-		             resultMap="SysDutyResult"/>
-		<association property="dept" column="dept_id" javaType="com.ruoyi.common.core.domain.entity.SysDept"
-		             resultMap="deptResult"/>
-		<association property="user" column="user_id" javaType="com.ruoyi.common.core.domain.entity.SysUser"
-		             resultMap="userResult"/>
-	
-	</resultMap>
-	
-	<resultMap id="deptResult" type="com.ruoyi.common.core.domain.entity.SysDept">
-		<id property="deptId" column="dept_id"/>
-		<result property="parentId" column="parent_id"/>
-		<result property="deptName" column="dept_name"/>
-		<result property="status" column="status"/>
-	</resultMap>
-	
-	<resultMap id="userResult" type="com.ruoyi.common.core.domain.entity.SysUser">
-		<id property="userId" column="user_id"/>
-		<result property="deptId" column="dept_id"/>
-		<result property="userName" column="user_name"/>
-		<result property="nickName" column="nick_name"/>
-		<result property="email" column="email"/>
-		<result property="phonenumber" column="phonenumber"/>
-		<result property="sex" column="sex"/>
-		<result property="avatar" column="avatar"/>
-		<result property="status" column="status"/>
-		<result property="delFlag" column="del_flag"/>
-	</resultMap>
-	
-	<resultMap type="SysDuty" id="SysDutyResult">
-		<result property="dutyId" column="duty_id"/>
-		<result property="dutyType" column="duty_type"/>
-	</resultMap>
-	
-	
-	<sql id="selectSysDutyLogVo">
-		select log_id,
-		       duty_id,
-		       user_id,
-		       dept_id,
-		       start_time,
-		       end_time,
-		       create_by,
-		       create_time,
-		       remark
-		from sys_duty_log
-	</sql>
-	<sql id="selectALL">
-		select log.log_id,
-		       log.duty_id,
-		       log.dept_id,
-		       log.user_id,
-		
-		       log.start_time,
-		       log.end_time,
-		       log.create_by,
-		       log.create_time,
-		       log.update_by,
-		       log.update_time,
-		       log.remark,
-		
-		       u.user_id,
-		       u.dept_id,
-		       u.user_name,
-		       u.nick_name,
-		       u.email,
-		       u.avatar,
-		       u.phonenumber,
-		       u.sex,
-		       u.status,
-		       u.del_flag,
-		
-		       d.dept_id,
-		       d.parent_id,
-		       d.ancestors,
-		       d.dept_name,
-		       d.order_num,
-		       d.leader,
-		       d.status as dept_status,
-		
-		       du.duty_id,
-		       du.duty_type
-		
-		
-		from sys_duty_log log
-			     left join sys_user u on log.user_id = u.user_id
-			     left join sys_dept d on u.dept_id = d.dept_id
-			     left join sys_duty du on log.duty_id = du.duty_id
-	</sql>
-	<select id="selectSysDutyLogList" parameterType="SysDutyLog" resultMap="SysDutyLogResult">
-		<include refid="selectALL"/>
-		where u.del_flag = '0' and u.user_id !=1 and d.del_flag = '0' and du.del_flag = '0' and log.del_flag='0'
-		<if test="logId != null">
-			and log.log_id = #{logId}
-		</if>
-		<if test="dutyId != null">
-			and log.duty_id = #{dutyId}
-		</if>
-		
-		<if test="userId != null">
-			and log.user_id = #{userId}
-		</if>
-		
-		<if test="deptId != null">
-			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId},
-			ancestors) ))
-		
-		</if>
-		<if test="createBy != null">
-			and log.create_by = #{createBy}
-		</if>
-		<if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
-			and log.start_time between #{params.beginCreateTime} and #{params.endCreateTime}
-		</if>
-		
-		
-		<if test="nickName != null  and nickName != ''">
-			and u.user_id in (select user_id from sys_user where nick_name like concat('%', #{nickName}, '%'))
-		</if>
-		<if test="params.startTime != null and params.startTime != '' and params.endTime != null and params.endTime != ''">
-			and (log.start_time between #{params.startTime} and #{params.endTime}
-			or log.end_time between #{params.startTime} and #{params.endTime})
-		</if>
-		<!--<if test="params.beginEndTime != null and params.beginEndTime != '' and params.endEndTime != null and params.endEndTime != ''">-->
-		<!--	and log.end_time between #{params.beginEndTime} and #{params.endEndTime}-->
-		<!--</if>-->
-		
-		<!--&lt;!&ndash; 数据范围过滤 &ndash;&gt;-->
-		${params.dataScope}
-	
-	</select>
-	
-	<select id="selectSysDutyLogByLogId" parameterType="Long" resultMap="SysDutyLogResult">
-		<include refid="selectALL"/>
-		where log_id = #{logId}
-	
-	</select>
-	
-	<insert id="insertSysDutyLog" parameterType="SysDutyLog" useGeneratedKeys="true" keyProperty="logId">
-		insert into sys_duty_log
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-			duty_id,
-			user_id,
-			dept_id,
-			start_time,
-			end_time,
-			<if test="remark != null and remark != ''">
-				remark,
-			</if>
-			<if test="createBy != null and createBy != ''">
-				create_by,
-				create_time,
-			</if>
-		
-		</trim>
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			duty_id,
-			user_id,
-			dept_id,
-			#{params.startTime} ,
-			#{params.endTime},
-			<if test="remark != null and remark != ''">
-				#{remark},
-			</if>
-			<if test="createBy != null and createBy != ''">
-				#{createBy},
-				sysdate()
-			</if>
-		
-		</trim>
-	</insert>
-	
-	<update id="updateSysDutyLog" parameterType="SysDutyLog">
-		update sys_duty_log
-		<trim prefix="SET" suffixOverrides=",">
-			<if test="dutyId != null">
-				duty_id = #{dutyId},
-			</if>
-			
-			<if test="userId != null">
-				user_id = #{userId},
-			</if>
-			
-			<!--<if test="deptId != null">-->
-			<!--	dept_id = #{deptId},-->
-			<!--</if>-->
-			
-			<if test="startTime != null">
-				start_time = #{startTime},
-			</if>
-			<if test="endTime != null">
-				end_time = #{endTime},
-			</if>
-			<if test="remark != null">
-				remark = #{remark},
-			</if>
-			<if test="updateBy != null and updateBy != ''">
-				update_by = #{updateBy},
-			</if>
-			update_time = sysdate()
-		</trim>
-		where log_id = #{logId}
-	</update>
-	
-	<delete id="deleteSysDutyLogByLogId" parameterType="Long">
-		update sys_duty_log
-		set del_flag = '2'
-		where log_id = #{logId}
-	</delete>
-	
-	<delete id="deleteSysDutyLogByLogIds" parameterType="String">
-		update sys_duty_log set del_flag = '2' where log_id in
-		<foreach item="logId" collection="array" open="(" separator="," close=")">
-			#{logId}
-		</foreach>
-	</delete>
+    <resultMap type="SysDutyLog" id="SysDutyLogResult">
+        <result property="logId" column="log_id"/>
+        <result property="dutyId" column="duty_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="userId" column="user_id"/>
+
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+
+        <!--<association property="dept" select="com.ruoyi.system.mapper.SysDeptMapper.selectDeptById" column="dept_id"/>-->
+        <!--<association property="duty" select="com.ruoyi.duty.mapper.SysDutyMapper.selectSysDutyByDutyId" column="duty_id"/>-->
+        <!--<association property="user" select="com.ruoyi.system.mapper.SysUserMapper.selectUserById" column="user_id"/>-->
+
+        <association property="duty" column="duty_id" javaType="com.ruoyi.duty.domain.SysDuty"
+                     resultMap="SysDutyResult"/>
+        <association property="dept" column="dept_id" javaType="com.ruoyi.common.core.domain.entity.SysDept"
+                     resultMap="deptResult"/>
+        <association property="user" column="user_id" javaType="com.ruoyi.common.core.domain.entity.SysUser"
+                     resultMap="userResult"/>
+    </resultMap>
+
+    <resultMap id="deptResult" type="com.ruoyi.common.core.domain.entity.SysDept">
+        <id property="deptId" column="dept_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <resultMap id="userResult" type="com.ruoyi.common.core.domain.entity.SysUser">
+        <id property="userId" column="user_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <resultMap type="SysDuty" id="SysDutyResult">
+        <result property="dutyId" column="duty_id"/>
+        <result property="dutyType" column="duty_type"/>
+    </resultMap>
+
+
+    <sql id="selectSysDutyLogVo">
+        select log_id,
+               duty_id,
+               user_id,
+               dept_id,
+               start_time,
+               end_time,
+               create_by,
+               create_time,
+               remark
+        from sys_duty_log
+    </sql>
+    <sql id="selectALL">
+        select log.log_id,
+               log.duty_id,
+               log.dept_id,
+               log.user_id,
+
+               log.start_time,
+               log.end_time,
+               log.create_by,
+               log.create_time,
+               log.update_by,
+               log.update_time,
+               log.remark,
+
+               u.user_id,
+               u.dept_id,
+               u.user_name,
+               u.nick_name,
+               u.email,
+               u.avatar,
+               u.phonenumber,
+               u.sex,
+               u.status,
+               u.del_flag,
+
+               d.dept_id,
+               d.parent_id,
+               d.ancestors,
+               d.dept_name,
+               d.order_num,
+               d.leader,
+               d.status as dept_status,
+
+               du.duty_id,
+               du.duty_type
+
+
+        from sys_duty_log log
+                 left join sys_user u on log.user_id = u.user_id
+                 left join sys_dept d on u.dept_id = d.dept_id
+                 left join sys_duty du on log.duty_id = du.duty_id
+    </sql>
+    <select id="selectSysDutyLogList" parameterType="SysDutyLog" resultMap="SysDutyLogResult">
+        <include refid="selectALL"/>
+        where u.del_flag = '0'
+          and u.user_id != 1
+          and d.del_flag = '0'
+          and du.del_flag = '0'
+          and log.del_flag = '0'
+        <if test="logId != null">
+            and log.log_id = #{logId}
+        </if>
+        <if test="dutyId != null">
+            and log.duty_id = #{dutyId}
+        </if>
+
+        <if test="userId != null">
+            and log.user_id = #{userId}
+        </if>
+
+        <if test="deptId != null">
+            AND (u.dept_id = #{deptId} OR u.dept_id IN (SELECT t.dept_id
+                                                        FROM sys_dept t
+                                                        WHERE find_in_set(#{deptId},
+                                                                          ancestors)))
+        </if>
+        <if test="createBy != null">
+            and log.create_by = #{createBy}
+        </if>
+        <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
+            and log.start_time between #{params.beginCreateTime} and #{params.endCreateTime}
+        </if>
+
+
+        <if test="nickName != null  and nickName != ''">
+            and u.user_id in (select user_id from sys_user where nick_name like concat('%', #{nickName}, '%'))
+        </if>
+        <if test="params.startTime != null and params.startTime != '' and params.endTime != null and params.endTime != ''">
+            and (log.start_time between #{params.startTime} and #{params.endTime}
+                or log.end_time between #{params.startTime} and #{params.endTime})
+        </if>
+        <!--<if test="params.beginEndTime != null and params.beginEndTime != '' and params.endEndTime != null and params.endEndTime != ''">-->
+        <!--	and log.end_time between #{params.beginEndTime} and #{params.endEndTime}-->
+        <!--</if>-->
+
+        <!--&lt;!&ndash; 数据范围过滤 &ndash;&gt;-->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectSysDutyLogByLogId" parameterType="Long" resultMap="SysDutyLogResult">
+        <include refid="selectALL"/>
+        where log_id = #{logId}
+    </select>
+
+    <insert id="insertSysDutyLog" parameterType="SysDutyLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into sys_duty_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            duty_id,
+            user_id,
+            dept_id,
+            start_time,
+            end_time,
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by,
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{dutyId},
+            #{userId},
+            #{deptId},
+            #{startTime},
+            #{endTime},
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                #{createBy},
+                sysdate()
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateSysDutyLog" parameterType="SysDutyLog">
+        update sys_duty_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dutyId != null">
+                duty_id = #{dutyId},
+            </if>
+
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+
+
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+                update_time = sysdate()
+            </if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deleteSysDutyLogByLogId" parameterType="Long">
+        update sys_duty_log
+        set del_flag = '2'
+        where log_id = #{logId}
+    </delete>
+
+    <delete id="deleteSysDutyLogByLogIds" parameterType="String">
+        update sys_duty_log
+        set del_flag = '2' where log_id in
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
 </mapper>

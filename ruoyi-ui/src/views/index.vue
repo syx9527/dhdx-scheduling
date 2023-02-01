@@ -1,10 +1,15 @@
 <template>
   <div class="app-container home">
     Hello world
+
   </div>
 </template>
 
 <script>
+
+import {getUserProfile} from "@/api/system/user";
+
+
 export default {
   name: "Index",
   data() {
@@ -13,7 +18,23 @@ export default {
       version: "3.8.5"
     };
   },
+  created() {
+    this.getUser();
+
+  },
   methods: {
+
+    getUser() {
+      getUserProfile().then(response => {
+        this.user = response.data;
+        this.roleGroup = response.roleGroup;
+        this.postGroup = response.postGroup;
+        console.log(this.user)
+        console.log(this.roleGroup)
+        console.log(this.roleGroup)
+      });
+    },
+
     goTarget(href) {
       window.open(href, "_blank");
     }
