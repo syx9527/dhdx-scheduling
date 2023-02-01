@@ -2,6 +2,10 @@ package com.ruoyi.web.controller.duty;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.duty.service.ISysDutyService;
+import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,18 +33,22 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/duty/duty_log")
-public class SysDutyLogController extends BaseController
-{
+public class SysDutyLogController extends BaseController {
     @Autowired
     private ISysDutyLogService sysDutyLogService;
+
+    @Autowired
+    private ISysUserService sysUserService;
+
+    @Autowired
+    private ISysDutyService sysDutyService;
 
     /**
      * 查询值班记录列表
      */
     @PreAuthorize("@ss.hasPermi('duty:duty_log:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysDutyLog sysDutyLog)
-    {
+    public TableDataInfo list(SysDutyLog sysDutyLog) {
         startPage();
         List<SysDutyLog> list = sysDutyLogService.selectSysDutyLogList(sysDutyLog);
         return getDataTable(list);
@@ -52,8 +60,7 @@ public class SysDutyLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('duty:duty_log:export')")
     @Log(title = "值班记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SysDutyLog sysDutyLog)
-    {
+    public void export(HttpServletResponse response, SysDutyLog sysDutyLog) {
         List<SysDutyLog> list = sysDutyLogService.selectSysDutyLogList(sysDutyLog);
         ExcelUtil<SysDutyLog> util = new ExcelUtil<SysDutyLog>(SysDutyLog.class);
         util.exportExcel(response, list, "值班记录数据");
@@ -64,8 +71,7 @@ public class SysDutyLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('duty:duty_log:query')")
     @GetMapping(value = "/{logId}")
-    public AjaxResult getInfo(@PathVariable("logId") Long logId)
-    {
+    public AjaxResult getInfo(@PathVariable("logId") Long logId) {
         return success(sysDutyLogService.selectSysDutyLogByLogId(logId));
     }
 
@@ -75,9 +81,15 @@ public class SysDutyLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('duty:duty_log:add')")
     @Log(title = "值班记录", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SysDutyLog sysDutyLog)
-    {
+    public AjaxResult add(@RequestBody SysDutyLog sysDutyLog) {
+
+        sysDutyLog.setDeptId(sysUserService.selectUserById(sysDutyLog.getUserId()).getDeptId());
+
+        sysDutyLog.setDutyId(sysDutyService.selectSysDutyByDutyId(sysDutyLog.getDutyId()).getDutyId());
         sysDutyLog.setCreateBy(getUsername());
+        System.out.println("------------------");
+        System.out.println(sysDutyLog);
+        System.out.println("------------------");
         return toAjax(sysDutyLogService.insertSysDutyLog(sysDutyLog));
     }
 
@@ -87,8 +99,9 @@ public class SysDutyLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('duty:duty_log:edit')")
     @Log(title = "值班记录", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SysDutyLog sysDutyLog)
-    {
+    public AjaxResult edit(@RequestBody SysDutyLog sysDutyLog) {
+
+
         sysDutyLog.setUpdateBy(getUsername());
         return toAjax(sysDutyLogService.updateSysDutyLog(sysDutyLog));
     }
@@ -98,9 +111,8 @@ public class SysDutyLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('duty:duty_log:remove')")
     @Log(title = "值班记录", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{logIds}")
-    public AjaxResult remove(@PathVariable Long[] logIds)
-    {
+    @DeleteMapping("/{logIds}")
+    public AjaxResult remove(@PathVariable Long[] logIds) {
         return toAjax(sysDutyLogService.deleteSysDutyLogByLogIds(logIds));
     }
 }

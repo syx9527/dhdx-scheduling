@@ -46,6 +46,7 @@ public class SysDutyLog extends BaseEntity {
     @Excel(name = "值班类型名称", targetAttr = "dutyType")
     private SysDuty duty;
 
+
     /**
      * 值班人员ID
      */
@@ -73,7 +74,15 @@ public class SysDutyLog extends BaseEntity {
      */
     @Excel(name = "值班人员姓名", targetAttr = "nickName")
     private SysUser user;
+    private String nickName;
 
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
 
     /**
      * 部门id
@@ -166,6 +175,7 @@ public class SysDutyLog extends BaseEntity {
                 .append("dutyName", getDutyName())
                 .append("dutyName", getDuty().getDutyType())
                 .append("userId", getUserId())
+                .append("nickName", getNickName())
                 .append("deptId", getDeptId())
                 .append("deptName", getDept().getDeptName())
                 .append("startTime", getStartTime())

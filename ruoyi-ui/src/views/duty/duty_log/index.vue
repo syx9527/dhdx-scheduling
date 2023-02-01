@@ -34,17 +34,17 @@
                  label-width="68px"
         >
 
-          <el-form-item label="部门名称" prop="deptName">
+          <el-form-item label="姓名" prop="nickName">
             <el-input
-              v-model="queryParams.deptName"
-              placeholder="请输入部门名称"
+              v-model="queryParams.nickName"
+              placeholder="请输入姓名"
               clearable
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="值班开始时间">
+          <el-form-item label="时间">
             <el-date-picker
-              v-model="daterangeStartTime"
+              v-model="daterangeTime"
               style="width: 240px"
               value-format="yyyy-MM-dd"
               type="daterange"
@@ -53,20 +53,9 @@
               end-placeholder="结束日期"
             ></el-date-picker>
           </el-form-item>
-          <el-form-item label="值班结束时间">
-            <el-date-picker
-              v-model="daterangeEndTime"
-              style="width: 240px"
-              value-format="yyyy-MM-dd"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
 
@@ -134,11 +123,13 @@
               <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
             </template>
           </el-table-column>
+
           <el-table-column label="值班结束时间" align="center" prop="endTime" width="180">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
             </template>
           </el-table-column>
+
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
@@ -207,27 +198,19 @@
             ></el-option>
           </el-select>
         </el-form-item>
-
-
-        <el-form-item label="值班开始时间" prop="startTime">
-          <el-date-picker clearable
-                          v-model="form.startTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择值班开始时间"
-          >
-          </el-date-picker>
+        <el-form-item label="值班时间">
+          <el-date-picker
+            v-model="startAndEndTime"
+            style="width: 240px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="值班结束时间" prop="endTime">
-          <el-date-picker clearable
-                          v-model="form.endTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择值班结束时间"
-          >
-          </el-date-picker>
-        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -288,12 +271,15 @@ export default {
       // 值班类型选项
       dutyOptions: [],
 
+      // 修改或增加表单时间选项
+      startAndEndTime: [],
+
       // 是否显示弹出层
       open: false,
+      // 值班时间范围
+      daterangeTime: [],
       // 值班结束时间时间范围
-      daterangeStartTime: [],
-      // 值班结束时间时间范围
-      daterangeEndTime: [],
+      // daterangeEndTime: [],
 
       // 查询参数
       queryParams: {
@@ -389,14 +375,14 @@ export default {
     getList() {
       this.loading = true
       this.queryParams.params = {}
-      if (null != this.daterangeStartTime && '' != this.daterangeStartTime) {
-        this.queryParams.params['beginStartTime'] = this.daterangeStartTime[0]
-        this.queryParams.params['endStartTime'] = this.daterangeStartTime[1]
+      if (null != this.daterangeTime && '' !== this.daterangeTime) {
+        this.queryParams.params['startTime'] = this.daterangeTime[0]
+        this.queryParams.params['endTime'] = this.daterangeTime[1]
       }
-      if (null != this.daterangeEndTime && '' != this.daterangeEndTime) {
-        this.queryParams.params['beginEndTime'] = this.daterangeEndTime[0]
-        this.queryParams.params['endEndTime'] = this.daterangeEndTime[1]
-      }
+      // if (null != this.daterangeEndTime && '' !== this.daterangeEndTime) {
+      //   this.queryParams.params['beginEndTime'] = this.daterangeEndTime[0]
+      //   this.queryParams.params['endEndTime'] = this.daterangeEndTime[1]
+      // }
       listDuty_log(this.queryParams).then(response => {
         this.duty_logList = response.rows
         this.total = response.total
@@ -449,8 +435,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.daterangeStartTime = []
-      this.daterangeEndTime = []
+      this.daterangeTime = []
+      // this.daterangeEndTime = []
       this.resetForm('queryForm')
       this.handleQuery()
       this.getDeptTree()
@@ -465,6 +451,7 @@ export default {
     handleAdd() {
 
       this.reset()
+      this.startAndEndTime = []
       this.getListDuty()
       this.open = true
       this.title = '添加值班记录'
@@ -485,6 +472,7 @@ export default {
 
         this.form.logId = res.logId
         this.form.dutyId = res.dutyId
+        this.startAndEndTime = [res.startTime, res.endTime]
         this.form.startTime = res.startTime
         this.form.endTime = res.endTime
 
@@ -496,6 +484,12 @@ export default {
     submitForm() {
       this.$refs['form'].validate(valid => {
         if (valid) {
+
+          if (null != this.startAndEndTime && '' !== this.startAndEndTime) {
+            this.form.startTime = this.startAndEndTime[0]
+            this.form.endTime = this.startAndEndTime[1]
+          }
+          this.form.deptId = null
           if (this.form.logId != null) {
             updateDuty_log(this.form).then(response => {
               this.$modal.msgSuccess('修改成功')
@@ -511,6 +505,7 @@ export default {
           }
         }
       })
+
     },
     /** 删除按钮操作 */
     handleDelete(row) {
