@@ -273,6 +273,7 @@
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
+
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -468,6 +469,9 @@ export default {
         nickName: [
           { required: true, message: '用户昵称不能为空', trigger: 'blur' }
         ],
+        deptId: [
+          { required: true, message: '部门不能为空', trigger: 'changes' }
+        ],
         password: [
           { required: true, message: '用户密码不能为空', trigger: 'blur' },
           { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
@@ -480,6 +484,8 @@ export default {
           }
         ],
         phonenumber: [
+          { required: true, message: '手机号码不能为空', trigger: 'blur' },
+
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
             message: '请输入正确的手机号码',
@@ -598,14 +604,20 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()
+      console.log(this.deptOptions)
+      this.form.deptId = this.deptOptions[0].id
+
       getUser().then(response => {
         console.log(response)
         this.postOptions = response.posts
         this.roleOptions = response.roles
+
         this.open = true
         this.title = '添加用户'
         this.form.password = this.initPassword
-      })
+      }).then(
+
+      )
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
