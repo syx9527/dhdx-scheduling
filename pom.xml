@@ -199,6 +199,12 @@
 				<version>3.8.5</version>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.ruoyi</groupId>
+				<artifactId>ruoyi-abuwx</artifactId>
+				<version>3.8.2</version>
+				<scope>compile</scope>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>
@@ -213,6 +219,7 @@
 		<module>ruoyi-duty</module>
 		<module>ruoyi-address</module>
 		<module>ruoyi-test</module>
+		<module>ruoyi-abuwx</module>
 	</modules>
 	<packaging>pom</packaging>
 
