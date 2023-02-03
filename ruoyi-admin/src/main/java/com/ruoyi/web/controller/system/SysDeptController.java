@@ -24,7 +24,7 @@ import com.ruoyi.system.service.ISysDeptService;
 
 /**
  * 部门信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -89,7 +89,8 @@ public class SysDeptController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:dept:edit')")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
-    @PutMapping
+    // @PutMapping
+    @PostMapping("/put")
     public AjaxResult edit(@Validated @RequestBody SysDept dept)
     {
         Long deptId = dept.getDeptId();
@@ -115,7 +116,8 @@ public class SysDeptController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:dept:remove')")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{deptId}")
+    // @DeleteMapping("/{deptId}")
+    @PostMapping("/{deptId}/delete")
     public AjaxResult remove(@PathVariable Long deptId)
     {
         if (deptService.hasChildByDeptId(deptId))

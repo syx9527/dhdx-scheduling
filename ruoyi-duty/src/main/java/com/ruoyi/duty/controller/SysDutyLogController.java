@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.duty;
+package com.ruoyi.duty.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -108,7 +108,8 @@ public class SysDutyLogController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('duty:duty_log:edit')")
     @Log(title = "值班记录", businessType = BusinessType.UPDATE)
-    @PutMapping
+    // @PutMapping
+    @PostMapping("/put")
     public AjaxResult edit(@RequestBody SysDutyLog sysDutyLog) {
 
 
@@ -121,7 +122,8 @@ public class SysDutyLogController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('duty:duty_log:remove')")
     @Log(title = "值班记录", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{logIds}")
+    // @DeleteMapping("/{logIds}")
+    @PostMapping("/{logIds}/delete")
     public AjaxResult remove(@PathVariable Long[] logIds) {
         return toAjax(sysDutyLogService.deleteSysDutyLogByLogIds(logIds));
     }

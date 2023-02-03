@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.duty;
+package com.ruoyi.duty.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -82,7 +82,8 @@ public class SysDutyController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('duty:duty:edit')")
     @Log(title = "值班类型", businessType = BusinessType.UPDATE)
-    @PutMapping
+    // @PutMapping
+    @PostMapping("/put")
     public AjaxResult edit(@RequestBody SysDuty sysDuty) {
         sysDuty.setUpdateBy(getUsername());
         return toAjax(sysDutyService.updateSysDuty(sysDuty));
@@ -93,7 +94,8 @@ public class SysDutyController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('duty:duty:remove')")
     @Log(title = "值班类型", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{dutyIds}")
+    // @DeleteMapping("/{dutyIds}")
+    @PostMapping("/{dutyIds}/delete")
     public AjaxResult remove(@PathVariable Long[] dutyIds) {
         return toAjax(sysDutyService.deleteSysDutyByDutyIds(dutyIds));
     }

@@ -29,8 +29,8 @@ export function addType(data) {
 // 修改地址类型
 export function updateType(data) {
   return request({
-    url: '/address/type',
-    method: 'put',
+    url: '/address/type/put',
+    method: 'post',
     data: data
   })
 }
@@ -38,7 +38,7 @@ export function updateType(data) {
 // 删除地址类型
 export function delType(addressTypeId) {
   return request({
-    url: '/address/type/' + addressTypeId,
-    method: 'delete'
+    url: '/address/type/' + addressTypeId+'/delete',
+    method: 'post'
   })
 }

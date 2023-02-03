@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * swagger 用户测试方法
- * 
+ *
  * @author ruoyi
  */
 @Api("用户信息管理")
@@ -80,7 +80,8 @@ public class TestController extends BaseController
     }
 
     @ApiOperation("更新用户")
-    @PutMapping("/update")
+    // @PutMapping("/update")
+    @PostMapping("/update/put")
     public R<String> update(@RequestBody UserEntity user)
     {
         if (StringUtils.isNull(user) || StringUtils.isNull(user.getUserId()))
@@ -98,7 +99,8 @@ public class TestController extends BaseController
 
     @ApiOperation("删除用户信息")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = true, dataType = "int", paramType = "path", dataTypeClass = Integer.class)
-    @DeleteMapping("/{userId}")
+    // @DeleteMapping("/{userId}")
+    @PostMapping("/{userId}/delete")
     public R<String> delete(@PathVariable Integer userId)
     {
         if (!users.isEmpty() && users.containsKey(userId))

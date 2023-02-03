@@ -21,7 +21,7 @@ import com.ruoyi.system.service.ISysOperLogService;
 
 /**
  * 操作日志记录
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -52,7 +52,8 @@ public class SysOperlogController extends BaseController
 
     @Log(title = "操作日志", businessType = BusinessType.DELETE)
     @PreAuthorize("@ss.hasPermi('monitor:operlog:remove')")
-    @DeleteMapping("/{operIds}")
+    // @DeleteMapping("/{operIds}")
+    @PostMapping("/{operIds}/delete")
     public AjaxResult remove(@PathVariable Long[] operIds)
     {
         return toAjax(operLogService.deleteOperLogByIds(operIds));
@@ -60,7 +61,8 @@ public class SysOperlogController extends BaseController
 
     @Log(title = "操作日志", businessType = BusinessType.CLEAN)
     @PreAuthorize("@ss.hasPermi('monitor:operlog:remove')")
-    @DeleteMapping("/clean")
+    // @DeleteMapping("/clean")
+    @PostMapping("/clean/delete")
     public AjaxResult clean()
     {
         operLogService.cleanOperLog();

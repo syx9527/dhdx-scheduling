@@ -29,8 +29,8 @@ export function addDuty_log(data) {
 // 修改值班记录
 export function updateDuty_log(data) {
   return request({
-    url: '/duty/duty_log',
-    method: 'put',
+    url: '/duty/duty_log/put',
+    method: 'post',
     data: data
   })
 }
@@ -38,7 +38,7 @@ export function updateDuty_log(data) {
 // 删除值班记录
 export function delDuty_log(logId) {
   return request({
-    url: '/duty/duty_log/' + logId,
-    method: 'delete'
+    url: '/duty/duty_log/' + logId+'/delete',
+    method: 'post'
   })
 }

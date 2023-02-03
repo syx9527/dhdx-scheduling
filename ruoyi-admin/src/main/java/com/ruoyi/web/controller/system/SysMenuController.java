@@ -23,7 +23,7 @@ import com.ruoyi.system.service.ISysMenuService;
 
 /**
  * 菜单信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -102,7 +102,8 @@ public class SysMenuController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:menu:edit')")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
-    @PutMapping
+    // @PutMapping
+    @PostMapping("/put")
     public AjaxResult edit(@Validated @RequestBody SysMenu menu)
     {
         if (UserConstants.NOT_UNIQUE.equals(menuService.checkMenuNameUnique(menu)))
@@ -126,7 +127,8 @@ public class SysMenuController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:menu:remove')")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{menuId}")
+    // @DeleteMapping("/{menuId}")
+    @PostMapping("/{menuId}/delete")
     public AjaxResult remove(@PathVariable("menuId") Long menuId)
     {
         if (menuService.hasChildByMenuId(menuId))

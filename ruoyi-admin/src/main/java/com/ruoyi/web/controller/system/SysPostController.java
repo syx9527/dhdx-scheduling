@@ -25,7 +25,7 @@ import com.ruoyi.system.service.ISysPostService;
 
 /**
  * 岗位信息操作处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -46,7 +46,7 @@ public class SysPostController extends BaseController
         List<SysPost> list = postService.selectPostList(post);
         return getDataTable(list);
     }
-    
+
     @Log(title = "岗位管理", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('system:post:export')")
     @PostMapping("/export")
@@ -92,7 +92,8 @@ public class SysPostController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:post:edit')")
     @Log(title = "岗位管理", businessType = BusinessType.UPDATE)
-    @PutMapping
+    // @PutMapping
+    @PostMapping("/put")
     public AjaxResult edit(@Validated @RequestBody SysPost post)
     {
         if (UserConstants.NOT_UNIQUE.equals(postService.checkPostNameUnique(post)))
@@ -112,7 +113,8 @@ public class SysPostController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:post:remove')")
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{postIds}")
+    // @DeleteMapping("/{postIds}")
+    @PostMapping("/{postIds}/delete")
     public AjaxResult remove(@PathVariable Long[] postIds)
     {
         return toAjax(postService.deletePostByIds(postIds));

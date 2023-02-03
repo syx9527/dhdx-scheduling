@@ -22,7 +22,7 @@ import com.ruoyi.system.service.ISysLogininforService;
 
 /**
  * 系统访问记录
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -56,7 +56,8 @@ public class SysLogininforController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('monitor:logininfor:remove')")
     @Log(title = "登录日志", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{infoIds}")
+    // @DeleteMapping("/{infoIds}")
+    @PostMapping("/{infoIds}/delete")
     public AjaxResult remove(@PathVariable Long[] infoIds)
     {
         return toAjax(logininforService.deleteLogininforByIds(infoIds));
@@ -64,7 +65,8 @@ public class SysLogininforController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('monitor:logininfor:remove')")
     @Log(title = "登录日志", businessType = BusinessType.CLEAN)
-    @DeleteMapping("/clean")
+    // @DeleteMapping("/clean")
+    @PostMapping("/clean/delete")
     public AjaxResult clean()
     {
         logininforService.cleanLogininfor();

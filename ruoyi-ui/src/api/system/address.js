@@ -29,8 +29,8 @@ export function addAddress(data) {
 // 修改地址
 export function updateAddress(data) {
   return request({
-    url: '/system/address',
-    method: 'put',
+    url: '/system/address/put',
+    method: 'post',
     data: data
   })
 }
@@ -38,7 +38,7 @@ export function updateAddress(data) {
 // 删除地址
 export function delAddress(addressId) {
   return request({
-    url: '/system/address/' + addressId,
-    method: 'delete'
+    url: '/system/address/' + addressId+'/delete',
+    method: 'post'
   })
 }

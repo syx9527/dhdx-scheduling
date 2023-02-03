@@ -27,7 +27,7 @@ import com.ruoyi.system.service.ISysDictTypeService;
 
 /**
  * 数据字典信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -100,7 +100,8 @@ public class SysDictDataController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:dict:edit')")
     @Log(title = "字典数据", businessType = BusinessType.UPDATE)
-    @PutMapping
+    // @PutMapping
+    @PostMapping("/put")
     public AjaxResult edit(@Validated @RequestBody SysDictData dict)
     {
         dict.setUpdateBy(getUsername());
@@ -112,7 +113,8 @@ public class SysDictDataController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{dictCodes}")
+    // @DeleteMapping("/{dictCodes}")
+    @PostMapping("/{dictCodes}/delete")
     public AjaxResult remove(@PathVariable Long[] dictCodes)
     {
         dictDataService.deleteDictDataByIds(dictCodes);

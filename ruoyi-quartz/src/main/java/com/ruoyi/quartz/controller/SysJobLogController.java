@@ -21,7 +21,7 @@ import com.ruoyi.quartz.service.ISysJobLogService;
 
 /**
  * 调度日志操作处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -55,7 +55,7 @@ public class SysJobLogController extends BaseController
         ExcelUtil<SysJobLog> util = new ExcelUtil<SysJobLog>(SysJobLog.class);
         util.exportExcel(response, list, "调度日志");
     }
-    
+
     /**
      * 根据调度编号获取详细信息
      */
@@ -72,7 +72,8 @@ public class SysJobLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('monitor:job:remove')")
     @Log(title = "定时任务调度日志", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{jobLogIds}")
+    // @DeleteMapping("/{jobLogIds}")
+    @PostMapping("/{jobLogIds}/delete")
     public AjaxResult remove(@PathVariable Long[] jobLogIds)
     {
         return toAjax(jobLogService.deleteJobLogByIds(jobLogIds));
@@ -83,7 +84,8 @@ public class SysJobLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('monitor:job:remove')")
     @Log(title = "调度日志", businessType = BusinessType.CLEAN)
-    @DeleteMapping("/clean")
+    // @DeleteMapping("/clean")
+    @PostMapping("/clean/delete")
     public AjaxResult clean()
     {
         jobLogService.cleanJobLog();

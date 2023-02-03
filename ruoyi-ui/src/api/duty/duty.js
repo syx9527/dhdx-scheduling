@@ -29,8 +29,8 @@ export function addDuty(data) {
 // 修改值班类型
 export function updateDuty(data) {
   return request({
-    url: '/duty/duty',
-    method: 'put',
+    url: '/duty/duty/put',
+    method: 'post',
     data: data
   })
 }
@@ -38,7 +38,7 @@ export function updateDuty(data) {
 // 删除值班类型
 export function delDuty(dutyId) {
   return request({
-    url: '/duty/duty/' + dutyId,
-    method: 'delete'
+    url: '/duty/duty/' + dutyId+'/delete',
+    method: 'post'
   })
 }

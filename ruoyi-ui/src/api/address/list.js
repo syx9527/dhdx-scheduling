@@ -29,8 +29,8 @@ export function addList(data) {
 // 修改地址-类型
 export function updateList(data) {
   return request({
-    url: '/address/list',
-    method: 'put',
+    url: '/address/list/put',
+    method: 'post',
     data: data
   })
 }
@@ -38,7 +38,7 @@ export function updateList(data) {
 // 删除地址-类型
 export function delList(id) {
   return request({
-    url: '/address/list/' + id,
-    method: 'delete'
+    url: '/address/list/' + id+'/delete',
+    method: 'post'
   })
 }

@@ -29,8 +29,8 @@ export function addPost(data) {
 // 修改岗位
 export function updatePost(data) {
   return request({
-    url: '/system/post',
-    method: 'put',
+    url: '/system/post/put',
+    method: 'post',
     data: data
   })
 }
@@ -39,8 +39,8 @@ export function updatePost(data) {
 export function delPost(postId) {
   console.log("delete")
   return request({
-    url: '/system/post/' + postId,
-    method: 'delete'
+    url: '/system/post/' + postId+'/delete',
+    method: 'post'
   })
 
 }
