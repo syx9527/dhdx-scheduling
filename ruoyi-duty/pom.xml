@@ -22,10 +22,7 @@
 			<artifactId>ruoyi-system</artifactId>
 		
 		</dependency>
-		<dependency>
-			<groupId>com.ruoyi</groupId>
-			<artifactId>ruoyi-admin</artifactId>
-		</dependency>
+	
 	</dependencies>
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>

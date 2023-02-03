@@ -34,7 +34,7 @@
         <result property="ancestors" column="ancestors"/>
         <result property="orderNum" column="order_num"/>
         <result property="leader" column="leader"/>
-        <result property="status" column="dept_status"/>
+        <result property="status" column="status"/>
     </resultMap>
 
     <resultMap id="RoleResult" type="SysRole">

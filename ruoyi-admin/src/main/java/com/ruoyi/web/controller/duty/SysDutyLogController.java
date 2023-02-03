@@ -1,4 +1,4 @@
-package com.ruoyi.duty.controller;
+package com.ruoyi.web.controller.duty;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;

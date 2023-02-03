@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysMajorMapper">
+	
+	<resultMap type="SysMajor" id="SysMajorResult">
+		<result property="majorId" column="major_id"/>
+		<result property="majorName" column="major_name"/>
+		<result property="deptId" column="dept_id"/>
+		<result property="orderNum" column="order_num"/>
+		<result property="leader" column="leader"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="status" column="status"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="createBy" column="create_by"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateBy" column="update_by"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="remark" column="remark"/>
+		
+		<association property="dept" column="dept_id" javaType="SysDept" resultMap="deptResult"/>
+	</resultMap>
+	
+	<resultMap id="deptResult" type="SysDept">
+		<id property="deptId" column="dept_id"/>
+		<result property="parentId" column="parent_id"/>
+		<result property="deptName" column="dept_name"/>
+		<result property="ancestors" column="ancestors"/>
+		<result property="orderNum" column="order_num"/>
+		<result property="leader" column="leader"/>
+		<result property="status" column="status"/>
+	</resultMap>
+	
+	<sql id="selectSysMajorVo">
+		select m.major_id,
+		       m.major_name,
+		       m.dept_id,
+		       m.order_num,
+		       m.leader,
+		       m.phone,
+		       m.email,
+		       m.status,
+		       m.del_flag,
+		       m.create_by,
+		       m.create_time,
+		       m.update_by,
+		       m.update_time,
+		       m.remark,
+		
+		       d.dept_id,
+		       d.parent_id,
+		       d.dept_name,
+		       d.ancestors,
+		       d.order_num,
+		       d.leader,
+		       d.status
+		from sys_major m
+			     left join sys_dept d on m.dept_id = d.dept_id
+	</sql>
+	
+	<select id="selectSysMajorList" parameterType="SysMajor" resultMap="SysMajorResult">
+		<include refid="selectSysMajorVo"/>
+		where d.del_flag = '0'
+		and m.del_flag = '0'
+		
+		<if test="majorName != null  and majorName != ''">and major_name like concat('%', #{majorName}, '%')</if>
+		<if test="deptId != null ">
+			AND (m.dept_id = #{deptId} OR m.dept_id IN (SELECT t.dept_id
+			FROM sys_dept t
+			WHERE find_in_set(#{deptId}, ancestors)))
+		</if>
+		<if test="orderNum != null ">and order_num = #{orderNum}</if>
+		<if test="leader != null  and leader != ''">and leader = #{leader}</if>
+		<if test="phone != null  and phone != ''">and phone = #{phone}</if>
+		<if test="email != null  and email != ''">and email = #{email}</if>
+		<if test="status != null  and status != ''">and status = #{status}</if>
+		<if test="remark != null  and remark != ''">and remark = #{remark}</if>
+		
+		
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+	</select>
+	
+	<select id="selectSysMajorByMajorId" parameterType="Long" resultMap="SysMajorResult">
+		<include refid="selectSysMajorVo"/>
+		where major_id = #{majorId}
+	</select>
+	
+	<insert id="insertSysMajor" parameterType="SysMajor">
+		insert into sys_major
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="majorId != null">major_id,</if>
+			<if test="majorName != null and majorName != ''">major_name,</if>
+			<if test="deptId != null">dept_id,</if>
+			<if test="orderNum != null">order_num,</if>
+			<if test="leader != null">leader,</if>
+			<if test="phone != null">phone,</if>
+			<if test="email != null">email,</if>
+			<if test="status != null">status,</if>
+			<if test="delFlag != null">del_flag,</if>
+			<if test="createBy != null">create_by,</if>
+			<if test="createTime != null">create_time,</if>
+			<if test="updateBy != null">update_by,</if>
+			<if test="updateTime != null">update_time,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="majorId != null">#{majorId},</if>
+			<if test="majorName != null and majorName != ''">#{majorName},</if>
+			<if test="deptId != null">#{deptId},</if>
+			<if test="orderNum != null">#{orderNum},</if>
+			<if test="leader != null">#{leader},</if>
+			<if test="phone != null">#{phone},</if>
+			<if test="email != null">#{email},</if>
+			<if test="status != null">#{status},</if>
+			<if test="delFlag != null">#{delFlag},</if>
+			<if test="createBy != null">#{createBy},</if>
+			<if test="createTime != null">#{createTime},</if>
+			<if test="updateBy != null">#{updateBy},</if>
+			<if test="updateTime != null">#{updateTime},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</insert>
+	
+	<update id="updateSysMajor" parameterType="SysMajor">
+		update sys_major
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="majorName != null and majorName != ''">major_name = #{majorName},</if>
+			<if test="deptId != null">dept_id = #{deptId},</if>
+			<if test="orderNum != null">order_num = #{orderNum},</if>
+			<if test="leader != null">leader = #{leader},</if>
+			<if test="phone != null">phone = #{phone},</if>
+			<if test="email != null">email = #{email},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="delFlag != null">del_flag = #{delFlag},</if>
+			<if test="createBy != null">create_by = #{createBy},</if>
+			<if test="createTime != null">create_time = #{createTime},</if>
+			<if test="updateBy != null">update_by = #{updateBy},</if>
+			<if test="updateTime != null">update_time = #{updateTime},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where major_id = #{majorId}
+	</update>
+	
+	<delete id="deleteSysMajorByMajorId" parameterType="Long">
+		delete
+		from sys_major
+		where major_id = #{majorId}
+	</delete>
+	
+	<delete id="deleteSysMajorByMajorIds" parameterType="String">
+		delete from sys_major where major_id in
+		<foreach item="majorId" collection="array" open="(" separator="," close=")">
+			#{majorId}
+		</foreach>
+	</delete>
+</mapper>
