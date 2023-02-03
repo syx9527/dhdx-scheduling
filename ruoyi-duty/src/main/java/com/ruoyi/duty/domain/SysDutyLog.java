@@ -5,6 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.domain.SysMajor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -35,6 +36,9 @@ public class SysDutyLog extends BaseEntity {
      */
     private String dutyName;
 
+    public SysDutyLog() {
+    }
+
     public String getDutyName() {
         return dutyName;
     }
@@ -46,6 +50,21 @@ public class SysDutyLog extends BaseEntity {
     @Excel(name = "值班类型名称", targetAttr = "dutyType")
     private SysDuty duty;
 
+    public Long getMajorId() {
+        return majorId;
+    }
+
+    public void setMajorId(Long majorId) {
+        this.majorId = majorId;
+    }
+
+    public SysMajor getMajor() {
+        return major;
+    }
+
+    public void setMajor(SysMajor major) {
+        this.major = major;
+    }
 
     /**
      * 值班人员ID
@@ -94,6 +113,18 @@ public class SysDutyLog extends BaseEntity {
      */
     @Excel(name = "部门名称", targetAttr = "deptName")
     private SysDept dept;
+
+    /**
+     * 专业id
+     */
+    private Long majorId;
+
+
+    /**
+     * zhu 专业对象
+     */
+    @Excel(name = "专业", targetAttr = "majorName")
+    private SysMajor major;
 
     /**
      * 值班开始时间

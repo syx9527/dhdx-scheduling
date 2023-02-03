@@ -118,7 +118,8 @@
           <!--      <el-table-column label="值班人员ID" align="center" prop="userId" />-->
           <el-table-column label="值班人员姓名" align="center" prop="user.nickName"/>
           <!--      <el-table-column label="部门id" align="center" prop="deptId" />-->
-          <el-table-column label="部门名称" align="center" prop="dept.deptName"/>
+          <el-table-column label="部门" align="center" prop="dept.deptName"/>
+          <el-table-column label="专业" align="center" prop="major.majorName"/>
           <el-table-column label="值班开始时间" align="center" prop="startTime" width="180">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
@@ -223,7 +224,7 @@
 </template>
 
 <script>
-import {listDuty_log, getDuty_log, delDuty_log, addDuty_log, updateDuty_log} from '@/api/duty/duty_log'
+import { listDuty_log, getDuty_log, delDuty_log, addDuty_log, updateDuty_log } from '@/api/duty/duty_log'
 import {
   listUser,
   getUser,
@@ -234,14 +235,14 @@ import {
   changeUserStatus,
   deptTreeSelect
 } from '@/api/system/user'
-import {getToken} from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import {listDuty} from '@/api/duty/duty'
+import { listDuty } from '@/api/duty/duty'
 
 export default {
   name: 'Duty_log',
-  components: {Treeselect},
+  components: { Treeselect },
   data() {
     return {
       // 遮罩层
@@ -312,22 +313,22 @@ export default {
       // 表单校验
       rules: {
         dutyId: [
-          {required: true, message: '值班类型不能为空', trigger: 'change'}
+          { required: true, message: '值班类型不能为空', trigger: 'change' }
         ],
         deptId: [
-          {required: false, message: '部门不能为空', trigger: 'change'}
+          { required: false, message: '部门不能为空', trigger: 'change' }
         ],
         userId: [
-          {required: true, message: '用户不能为空', trigger: 'blur'}
+          { required: true, message: '用户不能为空', trigger: 'blur' }
         ],
         startAndEndTime: [
-          {required: true, type: 'array', message: '值班时间不能为空', trigger: 'change'}
+          { required: true, type: 'array', message: '值班时间不能为空', trigger: 'change' }
         ],
         startTime: [
-          {required: true, type: 'array', message: '值班开始时间不能为空', trigger: 'change'}
+          { required: true, type: 'array', message: '值班开始时间不能为空', trigger: 'change' }
         ],
         endTime: [
-          {required: true, type: 'array', message: '值班结束时间不能为空', trigger: 'change'}]
+          { required: true, type: 'array', message: '值班结束时间不能为空', trigger: 'change' }]
 
       }
     }
@@ -470,7 +471,6 @@ export default {
         let res
         res = response.data
 
-
         this.getUserList(res.deptId)
 
         this.form.deptId = res.deptId
@@ -521,7 +521,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const logIds = row.logId || this.ids
-      this.$modal.confirm('是否确认删除值班记录编号为"' + logIds + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除值班记录编号为"' + logIds + '"的数据项？').then(function() {
         return delDuty_log(logIds)
       }).then(() => {
         this.getList()

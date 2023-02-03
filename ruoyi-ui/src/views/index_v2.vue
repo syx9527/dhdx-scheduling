@@ -157,8 +157,8 @@ export default {
           if (index === 0) {
             this.mergeObj[key].push(1)
           } else {
-            // 判断当前行是否与上一行其值相等 如果相等 在 count 记录的位置其值 +1 表示当前行需要合并 并push 一个 0 作为占位
-            if (item[key] === data[index - 1][key]) {
+            // 判断当前行是否与上一行其值相等并且存在 如果相等 在 count 记录的位置其值 +1 表示当前行需要合并 并push 一个 0 作为占位
+            if (item[key] === data[index - 1][key] || item[key]) {
               this.mergeObj[key][count] += 1
               this.mergeObj[key].push(0)
             } else {
