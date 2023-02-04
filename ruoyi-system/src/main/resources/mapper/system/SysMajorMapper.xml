@@ -72,11 +72,11 @@
 			WHERE find_in_set(#{deptId}, ancestors)))
 		</if>
 		<if test="orderNum != null ">and order_num = #{orderNum}</if>
-		<if test="leader != null  and leader != ''">and leader = #{leader}</if>
-		<if test="phone != null  and phone != ''">and phone = #{phone}</if>
-		<if test="email != null  and email != ''">and email = #{email}</if>
-		<if test="status != null  and status != ''">and status = #{status}</if>
-		<if test="remark != null  and remark != ''">and remark = #{remark}</if>
+		<if test="leader != null  and leader != ''">and m.leader = #{leader}</if>
+		<if test="phone != null  and phone != ''">and m.phone = #{phone}</if>
+		<if test="email != null  and email != ''">and m.email = #{email}</if>
+		<if test="status != null  and status != ''">and m.status = #{status}</if>
+		<if test="remark != null  and remark != ''">and m.remark = #{remark}</if>
 		
 		
 		<!-- 数据范围过滤 -->
