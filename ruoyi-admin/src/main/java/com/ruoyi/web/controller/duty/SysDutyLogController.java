@@ -1,35 +1,27 @@
 package com.ruoyi.web.controller.duty;
 
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.duty.domain.SysDuty;
+import com.ruoyi.duty.domain.SysDutyLog;
+import com.ruoyi.duty.service.ISysDutyLogService;
+import com.ruoyi.duty.service.ISysDutyService;
+import com.ruoyi.system.service.ISysMajorService;
+import com.ruoyi.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-
-import com.alibaba.druid.support.json.JSONUtils;
-import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.duty.domain.SysDuty;
-import com.ruoyi.duty.service.ISysDutyService;
-import com.ruoyi.system.service.ISysMajorService;
-import com.ruoyi.system.service.ISysUserService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.duty.domain.SysDutyLog;
-import com.ruoyi.duty.service.ISysDutyLogService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 值班记录Controller
@@ -88,9 +80,13 @@ public class SysDutyLogController extends BaseController {
             if (a != 0) {
                 return a > 0 ? 1 : -1;
             }
-            a = o1.getMajorId() - o2.getMajorId();
-            if (a != 0) {
-                return a > 0 ? 1 : -1;
+            if (o1.getMajorId() != null | o2.getMajorId() != null) {
+                System.out.println(o1.getMajorId());
+                System.out.println(o2.getMajorId());
+                a = o1.getMajorId() - o2.getMajorId();
+                if (a != 0) {
+                    return a > 0 ? 1 : -1;
+                }
             }
             a = o1.getUserId() - o2.getUserId();
             if (a != 0) {
@@ -102,19 +98,21 @@ public class SysDutyLogController extends BaseController {
         for (SysDutyLog dutyLog : resList) {
             Map<String, Object> resultMap = new HashMap<>();
             dutyLog.setDeptDutyBoss(map.get(dutyLog.getDeptId()));
-            resultMap.put("deptId", dutyLog.getDept().getDeptId());
+            resultMap.put("deptId", dutyLog.getDeptId());
             resultMap.put("deptName", dutyLog.getDept().getDeptName());
-            resultMap.put("major_id", dutyLog.getMajorId());
+
             if (dutyLog.getMajorId() != null) {
+                resultMap.put("major_id", dutyLog.getMajorId());
                 resultMap.put("major", dutyLog.getMajor().getMajorName());
-            }else {
+            } else {
+                resultMap.put("major_id", 0);
                 resultMap.put("major", "-");
             }
             if (dutyLog.getDeptDutyBoss() != null) {
                 resultMap.put("dutyLeaderId", dutyLog.getDeptDutyBoss().getUserId());
                 resultMap.put("dutyLeaderName", dutyLog.getDeptDutyBoss().getNickName());
                 resultMap.put("dutyLeaderPhone", dutyLog.getDeptDutyBoss().getPhonenumber());
-            }else {
+            } else {
                 resultMap.put("dutyLeaderId", "-");
                 resultMap.put("dutyLeaderName", "-");
                 resultMap.put("dutyLeaderPhone", "-");
