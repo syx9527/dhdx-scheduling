@@ -76,16 +76,13 @@ public class SysDutyLogController extends BaseController {
         List<SysDutyLog> list = sysDutyLogService.selectSysDutyLogList(sysDutyLog);
         List<SysDutyLog> resList = new ArrayList<>();
         Map<Long, SysUser> map = new HashMap<>();
-
         for (SysDutyLog dutyLog : list) {
             if (dutyLog.getDutyId() == 1L) {
                 map.put(dutyLog.getDeptId(), dutyLog.getUser());
-                // System.out.println(dutyLog.getUser());
             } else {
                 resList.add(dutyLog);
             }
         }
-
         resList.sort((o1, o2) -> {
             long a = o1.getDeptId() - o2.getDeptId();
             if (a != 0) {
@@ -101,38 +98,33 @@ public class SysDutyLogController extends BaseController {
             }
             return 0;
         });
-
-        List<Map> resultLst = new ArrayList<>();
+        List<Map<String, Object>> resultLst = new ArrayList<>();
         for (SysDutyLog dutyLog : resList) {
             Map<String, Object> resultMap = new HashMap<>();
             dutyLog.setDeptDutyBoss(map.get(dutyLog.getDeptId()));
             resultMap.put("deptId", dutyLog.getDept().getDeptId());
             resultMap.put("deptName", dutyLog.getDept().getDeptName());
-            resultMap.put("dutyLeaderId", dutyLog.getDeptDutyBoss().getUserId());
-
             resultMap.put("major_id", dutyLog.getMajorId());
             if (dutyLog.getMajorId() != null) {
                 resultMap.put("major", dutyLog.getMajor().getMajorName());
             }else {
                 resultMap.put("major", "-");
             }
-            if (dutyLog.getDeptDutyBoss().getUserId() != null) {
+            if (dutyLog.getDeptDutyBoss() != null) {
+                resultMap.put("dutyLeaderId", dutyLog.getDeptDutyBoss().getUserId());
                 resultMap.put("dutyLeaderName", dutyLog.getDeptDutyBoss().getNickName());
                 resultMap.put("dutyLeaderPhone", dutyLog.getDeptDutyBoss().getPhonenumber());
             }else {
+                resultMap.put("dutyLeaderId", "-");
                 resultMap.put("dutyLeaderName", "-");
                 resultMap.put("dutyLeaderPhone", "-");
             }
-
             resultMap.put("dutyUsernameId", dutyLog.getUser().getUserId());
             resultMap.put("dutyUsername", dutyLog.getUser().getNickName());
             resultMap.put("dutyUserPhone", dutyLog.getUser().getPhonenumber());
             resultMap.put("remark", dutyLog.getRemark());
-
             resultLst.add(resultMap);
         }
-
-
         return getDataTable(resultLst);
     }
 
