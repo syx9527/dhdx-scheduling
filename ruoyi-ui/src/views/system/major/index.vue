@@ -416,11 +416,14 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1
+
       this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm('queryForm')
+      this.queryParams.deptId = undefined
+      this.$refs.tree.setCurrentKey(null)
       this.handleQuery()
     },
     // 多选框选中数据

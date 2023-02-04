@@ -41,7 +41,7 @@ public class SysDutyLogServiceImpl implements ISysDutyLogService {
      * @return 值班记录
      */
     @Override
-    @DataScope(deptAlias = "d", userAlias = "u")
+    // @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysDutyLog> selectSysDutyLogList(SysDutyLog sysDutyLog) {
         startPage();
         return sysDutyLogMapper.selectSysDutyLogList(sysDutyLog);

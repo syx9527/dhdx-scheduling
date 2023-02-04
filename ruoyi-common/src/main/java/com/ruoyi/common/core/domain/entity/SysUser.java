@@ -1,8 +1,10 @@
 package com.ruoyi.common.core.domain.entity;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.*;
+
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -12,6 +14,7 @@ import com.ruoyi.common.annotation.Excel.Type;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.ruoyi.common.xss.Xss;
+
 
 /**
  * 用户对象 sys_user
@@ -104,6 +107,9 @@ public class SysUser extends BaseEntity {
             @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
     })
     private SysDept dept;
+
+
+
 
     /**
      * 角色对象
@@ -289,32 +295,58 @@ public class SysUser extends BaseEntity {
         return roleId;
     }
 
+
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("userId", getUserId())
-                .append("deptId", getDeptId())
-                .append("userName", getUserName())
-                .append("nickName", getNickName())
-                .append("email", getEmail())
-                .append("phonenumber", getPhonenumber())
-                .append("sex", getSex())
-                .append("avatar", getAvatar())
-                .append("password", getPassword())
-                .append("status", getStatus())
-                .append("delFlag", getDelFlag())
-                .append("loginIp", getLoginIp())
-                .append("loginDate", getLoginDate())
-                .append("createBy", getCreateBy())
-                .append("createTime", getCreateTime())
-                .append("updateBy", getUpdateBy())
-                .append("updateTime", getUpdateTime())
-                .append("remark", getRemark())
-                .append("dept", getDept())
-                .toString();
+        return "SysUser{" +
+                "userId=" + userId +
+                ", deptId=" + deptId +
+                ", userName='" + userName + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", email='" + email + '\'' +
+                ", phonenumber='" + phonenumber + '\'' +
+                ", sex='" + sex + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", password='" + password + '\'' +
+                ", status='" + status + '\'' +
+                ", delFlag='" + delFlag + '\'' +
+                ", loginIp='" + loginIp + '\'' +
+                ", loginDate=" + loginDate +
+                ", dept=" + dept +
+                ", roles=" + roles +
+                ", roleIds=" + Arrays.toString(roleIds) +
+                ", postIds=" + Arrays.toString(postIds) +
+                ", roleId=" + roleId +
+
+                '}';
     }
+
+    // @Override
+    // public String toString() {
+    //     return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+    //             .append("userId", getUserId())
+    //             .append("deptId", getDeptId())
+    //             .append("userName", getUserName())
+    //             .append("nickName", getNickName())
+    //             .append("email", getEmail())
+    //             .append("phonenumber", getPhonenumber())
+    //             .append("sex", getSex())
+    //             .append("avatar", getAvatar())
+    //             .append("password", getPassword())
+    //             .append("status", getStatus())
+    //             .append("delFlag", getDelFlag())
+    //             .append("loginIp", getLoginIp())
+    //             .append("loginDate", getLoginDate())
+    //             .append("createBy", getCreateBy())
+    //             .append("createTime", getCreateTime())
+    //             .append("updateBy", getUpdateBy())
+    //             .append("updateTime", getUpdateTime())
+    //             .append("remark", getRemark())
+    //             .append("dept", getDept())
+    //             .toString();
+    // }
 }

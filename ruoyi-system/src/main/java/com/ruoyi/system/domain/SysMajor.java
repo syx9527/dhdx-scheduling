@@ -174,4 +174,23 @@ public class SysMajor extends BaseEntity
     public void setDept(SysDept dept) {
         this.dept = dept;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SysMajor sysMajor = (SysMajor) o;
+
+        return majorId != null ? majorId.equals(sysMajor.majorId) : sysMajor.majorId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return majorId != null ? majorId.hashCode() : 0;
+    }
 }

@@ -81,6 +81,7 @@
               :disabled="single"
               @click="handleUpdate"
               v-hasPermi="['duty:duty_log:edit']"
+
             >修改
             </el-button>
           </el-col>
@@ -146,6 +147,8 @@
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
+
+
                 @click="handleDelete(scope.row)"
                 v-hasPermi="['duty:duty_log:remove']"
               >删除
@@ -171,8 +174,21 @@
 
         <el-form-item label="归属部门" prop="deptId">
           <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门"
-                      @select="getUserList "
+                      @select="clickDept "
           />
+        </el-form-item>
+
+
+        <el-form-item label="专业" prop="majorId">
+          <el-select v-model="form.majorId" placeholder="请选择专业（可选）" @change="clickMajor">
+            <el-option
+              v-for="item in majorOptions"
+              :key="item.majorId"
+              :label="item.majorName"
+              :value="item.majorId"
+              :disabled="item.status == 1 "
+            ></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="用户" prop="userId">
@@ -224,25 +240,26 @@
 </template>
 
 <script>
-import { listDuty_log, getDuty_log, delDuty_log, addDuty_log, updateDuty_log } from '@/api/duty/duty_log'
+import {
+  listDuty_log,
+  getDuty_log,
+  delDuty_log,
+  addDuty_log,
+  updateDuty_log
+} from '@/api/duty/duty_log'
 import {
   listUser,
-  getUser,
-  delUser,
-  addUser,
-  updateUser,
-  resetUserPwd,
-  changeUserStatus,
   deptTreeSelect
 } from '@/api/system/user'
-import { getToken } from '@/utils/auth'
+import {getToken} from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { listDuty } from '@/api/duty/duty'
+import {listDuty} from '@/api/duty/duty'
+import {listMajor, listUserByMajorId} from "@/api/system/major";
 
 export default {
   name: 'Duty_log',
-  components: { Treeselect },
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
@@ -273,7 +290,10 @@ export default {
       userOptions: [],
       // 值班类型选项
       dutyOptions: [],
+      // 专业选项
+      majorOptions: [],
 
+      tempMajorId: -1,
       // 修改或增加表单时间选项
       startAndEndTime: [],
 
@@ -313,22 +333,22 @@ export default {
       // 表单校验
       rules: {
         dutyId: [
-          { required: true, message: '值班类型不能为空', trigger: 'change' }
+          {required: true, message: '值班类型不能为空', trigger: 'change'}
         ],
         deptId: [
-          { required: false, message: '部门不能为空', trigger: 'change' }
+          {required: false, message: '部门不能为空', trigger: 'change'}
         ],
         userId: [
-          { required: true, message: '用户不能为空', trigger: 'blur' }
+          {required: true, message: '用户不能为空', trigger: 'blur'}
         ],
         startAndEndTime: [
-          { required: true, type: 'array', message: '值班时间不能为空', trigger: 'change' }
+          {required: true, type: 'array', message: '值班时间不能为空', trigger: 'change'}
         ],
         startTime: [
-          { required: true, type: 'array', message: '值班开始时间不能为空', trigger: 'change' }
+          {required: true, type: 'array', message: '值班开始时间不能为空', trigger: 'change'}
         ],
         endTime: [
-          { required: true, type: 'array', message: '值班结束时间不能为空', trigger: 'change' }]
+          {required: true, type: 'array', message: '值班结束时间不能为空', trigger: 'change'}]
 
       }
     }
@@ -359,19 +379,48 @@ export default {
         this.dutyOptions = response.rows
       })
     },
-
-    /** 点击部门节点后查询用户列表 */
-    getUserList(data) {
+    /** 点击部门节点*/
+    clickDept(data) {
       this.queryParamsTemp = {
         deptId: data.id,
         pageNum: 1,
         pageSize: 1000,
-        isadmin: false
+        isadmin: false,
+        status: '0'
       }
       if (this.form.deptId !== data.id) {
         delete this.form.userId
-
+        delete this.form.majorId
       }
+      this.getMajorList()
+      this.getUserList()
+
+
+    },
+
+    /** 点击专业节点*/
+    clickMajor(data) {
+
+
+      if (this.form.majorId !== this.tempMajorId) {
+
+        delete this.form.userId
+      }
+      listUserByMajorId({"majorId": data}).then(response => {
+        this.userOptions = response.rows
+      })
+    },
+
+
+    /** 查询专业列表 */
+    getMajorList() {
+      listMajor(this.queryParamsTemp).then(response => {
+        this.majorOptions = response.rows
+      })
+    },
+
+    /** 点击查询用户列表 */
+    getUserList() {
       listUser(this.queryParamsTemp).then(response => {
           this.userOptions = response.rows
         }
@@ -417,10 +466,14 @@ export default {
         deptId: null,
         deptName: null,
         startTime: null,
-        endTime: null
+        endTime: null,
+        majorId: null,
+        majorName: null,
 
       }
+      this.tempMajorId = -1
       this.userOptions = []
+      this.majorOptions = []
       // this.deptOptions = []
       this.resetForm('form')
     },
@@ -442,8 +495,9 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.daterangeTime = []
-      // this.daterangeEndTime = []
       this.resetForm('queryForm')
+      this.queryParams.deptId = undefined
+      this.$refs.tree.setCurrentKey(null)
       this.handleQuery()
       this.getDeptTree()
     },
@@ -462,6 +516,8 @@ export default {
       this.open = true
       this.title = '添加值班记录'
     },
+
+
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
@@ -474,9 +530,12 @@ export default {
         this.getUserList(res.deptId)
 
         this.form.deptId = res.deptId
+
+        this.clickDept({id: res.deptId})
         this.form.userId = res.userId
 
         this.form.logId = res.logId
+        this.form.majorId = res.majorId
         this.form.dutyId = res.dutyId
         this.form.startAndEndTime = [res.startTime, res.endTime]
         this.form.startTime = res.startTime
@@ -493,24 +552,26 @@ export default {
         this.form.endTime = this.form.startAndEndTime[1]
       }
       this.$refs['form'].validate(valid => {
-        delete this.form.startAndEndTime
+
         if (valid) {
 
           // if (null != this.startAndEndTime && '' !== this.startAndEndTime) {
           //   this.form.startTime = this.startAndEndTime[0]
           //   this.form.endTime = this.startAndEndTime[1]
           // }
-          this.form.deptId = null
+
           if (this.form.logId != null) {
             updateDuty_log(this.form).then(response => {
               this.$modal.msgSuccess('修改成功')
               this.open = false
+              this.reset()
               this.getList()
             })
           } else {
             addDuty_log(this.form).then(response => {
               this.$modal.msgSuccess('新增成功')
               this.open = false
+              this.reset()
               this.getList()
             })
           }
@@ -521,7 +582,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const logIds = row.logId || this.ids
-      this.$modal.confirm('是否确认删除值班记录编号为"' + logIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除值班记录编号为"' + logIds + '"的数据项？').then(function () {
         return delDuty_log(logIds)
       }).then(() => {
         this.getList()

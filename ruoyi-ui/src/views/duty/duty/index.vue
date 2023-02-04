@@ -111,7 +111,7 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="id" align="center" prop="dutyId"/>
       <el-table-column label="值班类型" align="center" prop="dutyType"/>
-<!--      <el-table-column label="显示顺序" align="center" prop="dutySort"/>-->
+      <!--      <el-table-column label="显示顺序" align="center" prop="dutySort"/>-->
       <el-table-column label="创建者" align="center" prop="createBy"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
@@ -120,7 +120,7 @@
       </el-table-column>
 
       <el-table-column label="更新者" align="center" prop="updateBy"/>
-<!--      <el-table-column label="更新者" align="center" prop="updateBy"/>-->
+      <!--      <el-table-column label="更新者" align="center" prop="updateBy"/>-->
 
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template slot-scope="scope">
@@ -142,6 +142,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
+            :disabled="isDelete(scope.row)"
             @click="handleDelete(scope.row)"
             v-hasPermi="['duty:duty:remove']"
           >删除
@@ -165,9 +166,9 @@
           <el-input v-model="form.dutyType" placeholder="请输入值班类型"/>
         </el-form-item>
 
-<!--        <el-form-item label="显示顺序" prop="dutySort">-->
-<!--          <el-input v-model="form.dutySort" placeholder="请输入显示顺序"/>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="显示顺序" prop="dutySort">-->
+        <!--          <el-input v-model="form.dutySort" placeholder="请输入显示顺序"/>-->
+        <!--        </el-form-item>-->
 
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
@@ -182,7 +183,7 @@
 </template>
 
 <script>
-import { listDuty, getDuty, delDuty, addDuty, updateDuty } from '@/api/duty/duty'
+import {listDuty, getDuty, delDuty, addDuty, updateDuty} from '@/api/duty/duty'
 
 export default {
   name: 'Duty',
@@ -228,10 +229,10 @@ export default {
       // 表单校验
       rules: {
         dutyType: [
-          { required: true, message: '值班类型不能为空', trigger: 'change' }
+          {required: true, message: '值班类型不能为空', trigger: 'change'}
         ],
         dutySort: [
-          { required: true, message: '显示顺序不能为空', trigger: 'blur' }
+          {required: true, message: '显示顺序不能为空', trigger: 'blur'}
         ]
       }
     }
@@ -257,6 +258,9 @@ export default {
         this.total = response.total
         this.loading = false
       })
+    },
+    isDelete(row) {
+      return row.dutyId === 1
     },
     // 取消按钮
     cancel() {
@@ -292,6 +296,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.dutyId)
+      this.dutyTypes = selection.map(item => item.dutyType)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -303,6 +308,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+
       this.reset()
       const dutyId = row.dutyId || this.ids
       getDuty(dutyId).then(response => {
@@ -334,7 +340,18 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const dutyIds = row.dutyId || this.ids
-      this.$modal.confirm('是否确认删除值班类型编号为"' + dutyIds + '"的数据项？').then(function() {
+      const dutyTypes = row.dutyType || this.dutyTypes
+      const index_ = this.ids.indexOf(1)
+
+      console.log(this.ids)
+      console.log(index_)
+      if (index_ !== -1) {
+        this.$modal.msgWarning(dutyTypes[index_] + "不能删除")
+
+        return
+      }
+      console.log(this.dutyTypes);
+      this.$modal.confirm('是否确认删除"' + dutyTypes + '"值班类型类型的数据项？').then(function () {
         return delDuty(dutyIds)
       }).then(() => {
         this.getList()

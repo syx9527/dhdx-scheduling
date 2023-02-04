@@ -103,6 +103,7 @@ export default {
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
           location.href = '/';
+          // logoutResetUserAndPassword()
         })
       }).catch(() => {});
     }

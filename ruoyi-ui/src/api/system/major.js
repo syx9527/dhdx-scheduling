@@ -55,3 +55,12 @@ export function delMajor(majorId) {
     method: 'post'
   })
 }
+
+// 根据专业ID查询专业所属部门下用户列表
+export function listUserByMajorId(query) {
+  return request({
+    url: '/system/user/list/majorId',
+    method: 'get',
+    params: query
+  })
+}

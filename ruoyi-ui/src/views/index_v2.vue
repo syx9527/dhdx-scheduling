@@ -75,10 +75,13 @@
 </template>
 
 <script>
+import {listDuty_log_index} from "@/api";
+
 export default {
   data() {
     return {
-      tableData: [
+      tableData: [],
+      tableDataTest: [
         {
           deptId: '',
           deptName: '网络部',
@@ -133,6 +136,15 @@ export default {
           dutyUsername: '刘毅',
           dutyUserPhone: '13275723430',
           remark: '这里是备注--'
+        }, {
+          deptId: '',
+          deptName: '办公室',
+          dutyLeaderName: '办公室主任',
+          dutyLeaderPhone: '13986547943',
+          major: '-',
+          dutyUsername: '刘毅',
+          dutyUserPhone: '13265478430',
+          remark: '这里是备注--'
         }
       ],
 
@@ -141,13 +153,22 @@ export default {
     }
   },
   created() {
-    this.getSpanArr(this.data)
+    this.initIndexData()
 
   },
   methods: {
     indexMethod(index) {
       return index + 1
     },
+    initIndexData() {
+      listDuty_log_index().then(response => {
+        this.tableData = response.rows
+        this.getSpanArr(this.tableData)
+
+      })
+
+    },
+
     getSpanArr(data) {
       this.mergeArr.forEach((key, index1) => {
         let count = 0 // 用来记录需要合并行的起始位置
@@ -158,7 +179,7 @@ export default {
             this.mergeObj[key].push(1)
           } else {
             // 判断当前行是否与上一行其值相等并且存在 如果相等 在 count 记录的位置其值 +1 表示当前行需要合并 并push 一个 0 作为占位
-            if (item[key] === data[index - 1][key] || item[key]) {
+            if (item[key] === data[index - 1][key] && item["deptName"] === data[index - 1]["deptName"]) {
               this.mergeObj[key][count] += 1
               this.mergeObj[key].push(0)
             } else {
@@ -169,9 +190,11 @@ export default {
           }
         })
       })
+
+
     },
     // 默认接受四个值 { 当前行的值, 当前列的值, 行的下标, 列的下标 }
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+    objectSpanMethod({row, column, rowIndex, columnIndex}) {
       // 判断列的属性
       if (this.mergeArr.indexOf(column.property) !== -1) {
         // 判断其值是不是为0
@@ -184,8 +207,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getSpanArr(this.tableData)
-  }
+
 }
 </script>

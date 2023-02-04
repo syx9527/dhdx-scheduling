@@ -6,23 +6,25 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * 启动程序
- * 
+ *
  * @author ruoyi
  */
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class RuoYiApplication
-{
-    public static void main(String[] args)
-    {
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+public class RuoYiApplication {
+    public static void main(String[] args) {
         // System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(RuoYiApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  启动成功   ლ(´ڡ`ლ)\n" +
-                "███████╗    ██╗   ██╗    ██╗  ██╗\n" +
-                "██╔════╝    ╚██╗ ██╔╝    ╚██╗██╔╝\n" +
-                "███████╗     ╚████╔╝      ╚███╔╝ \n" +
-                "╚════██║      ╚██╔╝       ██╔██╗ \n" +
-                "███████║       ██║       ██╔╝ ██╗\n" +
-                "╚══════╝       ╚═╝       ╚═╝  ╚═╝\n" +
-                "                                 ");
+        System.out.println(
+                "\t\t\t\t\n" +
+                        "\t\t\t\t(♥◠‿◠)ﾉﾞ  启动成功   ლ(´ڡ`ლ)\n" +
+                        "\n" +
+                        "\t\t\t\t███████╗    ██╗   ██╗    ██╗  ██╗\n" +
+                        "\t\t\t\t██╔════╝    ╚██╗ ██╔╝    ╚██╗██╔╝\n" +
+                        "\t\t\t\t███████╗     ╚████╔╝      ╚███╔╝ \n" +
+                        "\t\t\t\t╚════██║      ╚██╔╝       ██╔██╗ \n" +
+                        "\t\t\t\t███████║       ██║       ██╔╝ ██╗\n" +
+                        "\n" +
+                        "\t\t\t\t"
+        );
     }
 }

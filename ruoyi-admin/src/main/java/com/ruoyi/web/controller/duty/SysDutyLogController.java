@@ -1,18 +1,23 @@
 package com.ruoyi.web.controller.duty;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.duty.domain.SysDuty;
 import com.ruoyi.duty.service.ISysDutyService;
+import com.ruoyi.system.service.ISysMajorService;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,15 +49,91 @@ public class SysDutyLogController extends BaseController {
     @Autowired
     private ISysDutyService sysDutyService;
 
+    private ISysMajorService sysMajorService;
+
+
     /**
      * 查询值班记录列表
      */
     @PreAuthorize("@ss.hasPermi('duty:duty_log:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysDutyLog sysDutyLog) {
+
         startPage();
         List<SysDutyLog> list = sysDutyLogService.selectSysDutyLogList(sysDutyLog);
+
         return getDataTable(list);
+    }
+
+    /**
+     * 首页
+     * 查询值班记录列表
+     */
+
+    @GetMapping("/list/index")
+    public TableDataInfo listIndex() {
+        SysDutyLog sysDutyLog = new SysDutyLog();
+        List<SysDutyLog> list = sysDutyLogService.selectSysDutyLogList(sysDutyLog);
+        List<SysDutyLog> resList = new ArrayList<>();
+        Map<Long, SysUser> map = new HashMap<>();
+
+        for (SysDutyLog dutyLog : list) {
+            if (dutyLog.getDutyId() == 1L) {
+                map.put(dutyLog.getDeptId(), dutyLog.getUser());
+                // System.out.println(dutyLog.getUser());
+            } else {
+                resList.add(dutyLog);
+            }
+        }
+
+        resList.sort((o1, o2) -> {
+            long a = o1.getDeptId() - o2.getDeptId();
+            if (a != 0) {
+                return a > 0 ? 1 : -1;
+            }
+            a = o1.getMajorId() - o2.getMajorId();
+            if (a != 0) {
+                return a > 0 ? 1 : -1;
+            }
+            a = o1.getUserId() - o2.getUserId();
+            if (a != 0) {
+                return a > 0 ? 1 : -1;
+            }
+            return 0;
+        });
+
+        List<Map> resultLst = new ArrayList<>();
+        for (SysDutyLog dutyLog : resList) {
+            Map<String, Object> resultMap = new HashMap<>();
+            dutyLog.setDeptDutyBoss(map.get(dutyLog.getDeptId()));
+            resultMap.put("deptId", dutyLog.getDept().getDeptId());
+            resultMap.put("deptName", dutyLog.getDept().getDeptName());
+            resultMap.put("dutyLeaderId", dutyLog.getDeptDutyBoss().getUserId());
+
+            resultMap.put("major_id", dutyLog.getMajorId());
+            if (dutyLog.getMajorId() != null) {
+                resultMap.put("major", dutyLog.getMajor().getMajorName());
+            }else {
+                resultMap.put("major", "-");
+            }
+            if (dutyLog.getDeptDutyBoss().getUserId() != null) {
+                resultMap.put("dutyLeaderName", dutyLog.getDeptDutyBoss().getNickName());
+                resultMap.put("dutyLeaderPhone", dutyLog.getDeptDutyBoss().getPhonenumber());
+            }else {
+                resultMap.put("dutyLeaderName", "-");
+                resultMap.put("dutyLeaderPhone", "-");
+            }
+
+            resultMap.put("dutyUsernameId", dutyLog.getUser().getUserId());
+            resultMap.put("dutyUsername", dutyLog.getUser().getNickName());
+            resultMap.put("dutyUserPhone", dutyLog.getUser().getPhonenumber());
+            resultMap.put("remark", dutyLog.getRemark());
+
+            resultLst.add(resultMap);
+        }
+
+
+        return getDataTable(resultLst);
     }
 
     /**
@@ -95,9 +176,12 @@ public class SysDutyLogController extends BaseController {
 
         SysUser sysUser = sysUserService.selectUserById(sysDutyLog.getUserId());
         SysDuty sysDuty = sysDutyService.selectSysDutyByDutyId(sysDutyLog.getDutyId());
+
+
         sysDutyLog.setDeptId(sysUser.getDeptId());
 
         sysDutyLog.setDutyId(sysDuty.getDutyId());
+
         sysDutyLog.setCreateBy(getUsername());
 
         return toAjax(sysDutyLogService.insertSysDutyLog(sysDutyLog));

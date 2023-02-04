@@ -72,6 +72,19 @@ public class SysDutyLog extends BaseEntity {
     @Excel(name = "值班人员ID")
     private Long userId;
 
+    /**
+     * 值班领导
+     */
+    private SysUser deptDutyBoss;
+
+    public SysUser getDeptDutyBoss() {
+        return deptDutyBoss;
+    }
+
+    public void setDeptDutyBoss(SysUser deptDutyBoss) {
+        this.deptDutyBoss = deptDutyBoss;
+    }
+
     public SysDuty getDuty() {
         return duty;
     }
@@ -211,4 +224,5 @@ public class SysDutyLog extends BaseEntity {
                 .append("endTime", getEndTime())
                 .toString();
     }
+
 }
