@@ -1,16 +1,16 @@
-package com.ruoyi.abuwxapi;
+package com.ruoyi.web.controller.wx;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.ruoyi.abuwx.domain.AbucoderWxappConfig;
-import com.ruoyi.abuwx.domain.AbucoderWxuser;
-import com.ruoyi.abuwx.service.IAbucoderWxappConfigService;
-import com.ruoyi.abuwx.service.IAbucoderWxuserService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.UUID;
+import com.ruoyi.wx.domain.AbucoderWxappConfig;
+import com.ruoyi.wx.domain.AbucoderWxuser;
+import com.ruoyi.wx.service.IAbucoderWxappConfigService;
+import com.ruoyi.wx.service.IAbucoderWxuserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,7 +88,7 @@ public class WxLoginController {
             /**如果不存在就插入到我们的数据库里*/
             AbucoderWxuser  wxuser = new AbucoderWxuser();
             wxuser.setNickname(String.valueOf(object.get("nickName")));
-            wxuser.setGender((Integer) object.get("gender"));
+            wxuser.setGender((Long) object.get("gender"));
             wxuser.setAvatar(String.valueOf(object.get("avatarUrl")));
             wxuser.setOpenid(openid);
             wxuser.setCreateTime(DateUtils.getNowDate());
@@ -97,7 +97,7 @@ public class WxLoginController {
         }else {
             /**如果存在就更新数据库里原有的数据*/
             abucoderWxuser.setNickname(String.valueOf(object.get("nickName")));
-            abucoderWxuser.setGender((Integer) object.get("gender"));
+            abucoderWxuser.setGender((Long) object.get("gender"));
             abucoderWxuser.setAvatar(String.valueOf(object.get("avatarUrl")));
             abucoderWxuser.setUpdateTime(DateUtils.getNowDate());
             abucoderWxuser.setUpdateBy("Abu");

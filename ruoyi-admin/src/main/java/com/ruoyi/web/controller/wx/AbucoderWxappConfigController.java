@@ -1,13 +1,13 @@
-package com.ruoyi.abuwx.controller;
+package com.ruoyi.web.controller.wx;
 
-import com.ruoyi.abuwx.domain.AbucoderWxappConfig;
-import com.ruoyi.abuwx.service.IAbucoderWxappConfigService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.wx.domain.AbucoderWxappConfig;
+import com.ruoyi.wx.service.IAbucoderWxappConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +18,11 @@ import java.util.List;
 /**
  * 小程序配置Controller
  *
- * @author 阿卜Coder QQ932696181
- * @date 2022-06-28
+ * @author ruoyi
+ * @date 2023-02-06
  */
 @RestController
-@RequestMapping("/abuwx/wxappconfig")
+@RequestMapping("/wx/wxconfig")
 public class AbucoderWxappConfigController extends BaseController
 {
     @Autowired
@@ -31,7 +31,7 @@ public class AbucoderWxappConfigController extends BaseController
     /**
      * 查询小程序配置列表
      */
-    @PreAuthorize("@ss.hasPermi('abuwx:wxappconfig:list')")
+    @PreAuthorize("@ss.hasPermi('wx:wxconfig:list')")
     @GetMapping("/list")
     public TableDataInfo list(AbucoderWxappConfig abucoderWxappConfig)
     {
@@ -43,7 +43,7 @@ public class AbucoderWxappConfigController extends BaseController
     /**
      * 导出小程序配置列表
      */
-    @PreAuthorize("@ss.hasPermi('abuwx:wxappconfig:export')")
+    @PreAuthorize("@ss.hasPermi('wx:wxconfig:export')")
     @Log(title = "小程序配置", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, AbucoderWxappConfig abucoderWxappConfig)
@@ -56,17 +56,17 @@ public class AbucoderWxappConfigController extends BaseController
     /**
      * 获取小程序配置详细信息
      */
-    @PreAuthorize("@ss.hasPermi('abuwx:wxappconfig:query')")
+    @PreAuthorize("@ss.hasPermi('wx:wxconfig:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(abucoderWxappConfigService.selectAbucoderWxappConfigById(id));
+        return success(abucoderWxappConfigService.selectAbucoderWxappConfigById(id));
     }
 
     /**
      * 新增小程序配置
      */
-    @PreAuthorize("@ss.hasPermi('abuwx:wxappconfig:add')")
+    @PreAuthorize("@ss.hasPermi('wx:wxconfig:add')")
     @Log(title = "小程序配置", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody AbucoderWxappConfig abucoderWxappConfig)
@@ -77,9 +77,10 @@ public class AbucoderWxappConfigController extends BaseController
     /**
      * 修改小程序配置
      */
-    @PreAuthorize("@ss.hasPermi('abuwx:wxappconfig:edit')")
+    @PreAuthorize("@ss.hasPermi('wx:wxconfig:edit')")
     @Log(title = "小程序配置", businessType = BusinessType.UPDATE)
-    @PutMapping
+    // @PutMapping
+    @PostMapping("/put")
     public AjaxResult edit(@RequestBody AbucoderWxappConfig abucoderWxappConfig)
     {
         return toAjax(abucoderWxappConfigService.updateAbucoderWxappConfig(abucoderWxappConfig));
@@ -88,9 +89,10 @@ public class AbucoderWxappConfigController extends BaseController
     /**
      * 删除小程序配置
      */
-    @PreAuthorize("@ss.hasPermi('abuwx:wxappconfig:remove')")
+    @PreAuthorize("@ss.hasPermi('wx:wxconfig:remove')")
     @Log(title = "小程序配置", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	 // @DeleteMapping("/{ids}")
+	@PostMapping("/{ids}/delete")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(abucoderWxappConfigService.deleteAbucoderWxappConfigByIds(ids));

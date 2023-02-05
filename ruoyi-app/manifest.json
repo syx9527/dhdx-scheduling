@@ -1,6 +1,6 @@
 {
-    "name" : "排版系统",
-    "appid" : "__UNI__DB0C725",
+    "name" : "若依移动端",
+    "appid" : "__UNI__25A9D80",
     "description" : "",
     "versionName" : "1.1.0",
     "versionCode" : "100",
@@ -51,7 +51,8 @@
         "optimization" : {
             "subPackages" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {}
     },
     "vueVersion" : "2",
     "h5" : {
