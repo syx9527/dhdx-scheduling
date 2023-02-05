@@ -214,7 +214,8 @@
 		<module>ruoyi-duty</module>
 		<module>ruoyi-address</module>
 		<module>ruoyi-test</module>
-		<!--<module>ruoyi-abuwx</module>-->
+        <module>ruoyi-wx</module>
+        <!--<module>ruoyi-abuwx</module>-->
 	</modules>
 	<packaging>pom</packaging>
 
