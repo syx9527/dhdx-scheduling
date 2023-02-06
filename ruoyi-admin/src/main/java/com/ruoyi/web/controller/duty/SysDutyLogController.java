@@ -81,8 +81,6 @@ public class SysDutyLogController extends BaseController {
                 return a > 0 ? 1 : -1;
             }
             if (o1.getMajorId() != null | o2.getMajorId() != null) {
-                System.out.println(o1.getMajorId());
-                System.out.println(o2.getMajorId());
                 a = o1.getMajorId() - o2.getMajorId();
                 if (a != 0) {
                     return a > 0 ? 1 : -1;
